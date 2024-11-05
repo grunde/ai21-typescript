@@ -1,14 +1,15 @@
+/// <reference types="node" />
 import { BlobLike } from "formdata-node";
 import { Readable } from "stream";
 import { Response } from "node-fetch";
-export type Headers = Record<string, string | null | undefined>;
-type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
-type APIResponseProps = {
+export declare type Headers = Record<string, string | null | undefined>;
+declare type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+declare type APIResponseProps = {
     response: Response;
     options: FinalRequestOptions;
     controller: AbortController;
 };
-export type RequestOptions<Req = unknown | Record<string, unknown> | Readable | BlobLike | ArrayBufferView | ArrayBuffer> = {
+export declare type RequestOptions<Req = unknown | Record<string, unknown> | Readable | BlobLike | ArrayBufferView | ArrayBuffer> = {
     method?: HTTPMethod;
     path?: string;
     query?: Req | undefined;
@@ -18,12 +19,12 @@ export type RequestOptions<Req = unknown | Record<string, unknown> | Readable | 
     stream?: boolean | undefined;
     timeout?: number;
 };
-export type FinalRequestOptions = RequestOptions & {
+export declare type FinalRequestOptions = RequestOptions & {
     method: HTTPMethod;
     path: string;
 };
-export declare const createResponseHeaders: (headers: Awaited<ReturnType<any>>["headers"]) => Record<string, string>;
-type ClientOptions = {
+export declare const createResponseHeaders: (headers: Awaited<ReturnType<any>>['headers']) => Record<string, string>;
+declare type ClientOptions = {
     apiKey?: string;
     organization?: string | null;
     project?: string | null;
@@ -34,8 +35,8 @@ type ClientOptions = {
     defaultHeaders?: Headers;
     dangerouslyAllowBrowser?: boolean;
 };
-type DefaultQuery = Record<string, unknown>;
-type PromiseOrValue<T> = T | Promise<T>;
+declare type DefaultQuery = Record<string, unknown>;
+declare type PromiseOrValue<T> = T | Promise<T>;
 export declare class APIPromise<T> extends Promise<T> {
     private responsePromise;
     private parseResponse;
@@ -70,11 +71,10 @@ export declare abstract class APIClient {
         apiKey: string;
         options: ClientOptions;
     });
-    protected get<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp>;
-    protected post<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp>;
-    protected patch<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp>;
-    protected put<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp>;
-    protected delete<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp>;
+    get<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp>;
+    post<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp>;
+    put<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp>;
+    delete<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp>;
     private getUserAgent;
     protected defaultHeaders(opts: FinalRequestOptions): Headers;
     protected authHeaders(opts: FinalRequestOptions): Headers;

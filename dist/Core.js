@@ -1,7 +1,14 @@
-import { AI21Error } from "./errors.js";
-import { VERSION } from "./version.js";
-import fetch from 'node-fetch';
-export const createResponseHeaders = (headers) => {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.readEnv = exports.APIClient = exports.APIPromise = exports.createResponseHeaders = void 0;
+const errors_js_1 = require("./errors.js");
+const version_js_1 = require("./version.js");
+const node_fetch_1 = __importDefault(require("node-fetch"));
+const Streaming_1 = require("./Streaming");
+const createResponseHeaders = (headers) => {
     return new Proxy(Object.fromEntries(
     // @ts-ignore
     headers.entries()), {
@@ -11,23 +18,30 @@ export const createResponseHeaders = (headers) => {
         },
     });
 };
+exports.createResponseHeaders = createResponseHeaders;
 const validatePositiveInteger = (name, n) => {
     if (typeof n !== 'number' || !Number.isInteger(n)) {
-        throw new AI21Error(`${name} must be an integer`);
+        throw new errors_js_1.AI21Error(`${name} must be an integer`);
     }
     if (n < 0) {
-        throw new AI21Error(`${name} must be a positive integer`);
+        throw new errors_js_1.AI21Error(`${name} must be a positive integer`);
     }
     return n;
 };
-async function defaultParseResponse({ response }) {
+async function defaultParseResponse({ response, options }) {
+    if (options.stream) {
+        if (!response.body) {
+            throw new errors_js_1.AI21Error('Response body is null');
+        }
+        return new Streaming_1.Stream(response);
+    }
     const contentType = response.headers.get('content-type');
     if (contentType?.includes('application/json')) {
         return response.json();
     }
     return response.text();
 }
-export class APIPromise extends Promise {
+class APIPromise extends Promise {
     constructor(responsePromise, parseResponse = defaultParseResponse) {
         super((resolve) => resolve(null));
         this.responsePromise = responsePromise;
@@ -59,7 +73,8 @@ export class APIPromise extends Promise {
         return this.parse().finally(onfinally);
     }
 }
-export class APIClient {
+exports.APIPromise = APIPromise;
+class APIClient {
     constructor({ baseURL, maxRetries = 2, timeout = 600000, // 10 minutes
     // fetch: overridenFetch,
     apiKey, options, }) {
@@ -75,9 +90,6 @@ export class APIClient {
     post(path, opts) {
         return this.makeRequest('post', path, opts);
     }
-    patch(path, opts) {
-        return this.makeRequest('patch', path, opts);
-    }
     put(path, opts) {
         return this.makeRequest('put', path, opts);
     }
@@ -85,7 +97,7 @@ export class APIClient {
         return this.makeRequest('delete', path, opts);
     }
     getUserAgent() {
-        return `${this.constructor.name}/JS ${VERSION}`;
+        return `${this.constructor.name}/JS ${version_js_1.VERSION}`;
     }
     defaultHeaders(opts) {
         return {
@@ -126,26 +138,28 @@ export class APIClient {
             ...this.defaultHeaders(options),
             ...options.headers,
         };
-        const response = await fetch(url, {
+        const response = await (0, node_fetch_1.default)(url, {
             method: options.method,
             headers: headers,
-            signal: controller.signal, // Type cast to avoid AbortSignal compatibility issue
+            signal: controller.signal,
             body: options.body ? JSON.stringify(options.body) : undefined
         });
         if (!response.ok) {
-            throw new AI21Error(`Request failed with status ${response.status}`);
+            throw new errors_js_1.AI21Error(`Request failed with status ${response.status}`);
         }
         return { response, options, controller };
     }
     static isRunningInBrowser() {
         return (typeof window !== 'undefined' &&
             typeof window.document !== 'undefined' &&
-            typeof fetch === 'function');
+            typeof node_fetch_1.default === 'function');
     }
 }
-export const readEnv = (env) => {
+exports.APIClient = APIClient;
+const readEnv = (env) => {
     if (typeof process !== 'undefined' && process.env) {
         return process.env[env]?.trim() ?? undefined;
     }
     return undefined;
 };
+exports.readEnv = readEnv;

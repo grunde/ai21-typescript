@@ -5,9 +5,8 @@ import { Readable } from "stream";
 import fetch from 'node-fetch';
 import { HeadersInit } from "node-fetch";
 import { Response } from "node-fetch";
+import { Stream } from "./Streaming";
 
-declare const Deno: any;
-declare const EdgeRuntime: any;
 // export type Fetch = (url: RequestInfo, init?: RequestInit) => Promise<Response>;
 export type Headers = Record<string, string | null | undefined>;
 
@@ -20,36 +19,20 @@ type APIResponseProps = {
     options: FinalRequestOptions;
     controller: AbortController;
   };
-type PlatformName =
-  | 'MacOS'
-  | 'Linux'
-  | 'Windows'
-  | 'FreeBSD'
-  | 'OpenBSD'
-  | 'iOS'
-  | 'Android'
-  | `Other:${string}`
-  | 'Unknown';
 
   export type RequestOptions<
   Req = unknown | Record<string, unknown> | Readable | BlobLike | ArrayBufferView | ArrayBuffer,
 > = {
-  method?: HTTPMethod;
-  path?: string;
-  query?: Req | undefined;
-  body?: Req | null | undefined;
-  headers?: Headers | undefined;
-
-  maxRetries?: number;
-  stream?: boolean | undefined;
-  timeout?: number;
-//   signal?: AbortSignal | undefined | null;
-//   idempotencyKey?: string;
-
-//   __binaryRequest?: boolean | undefined;
-//   __binaryResponse?: boolean | undefined;
-//   __streamClass?: typeof Stream;
-};
+    method?: HTTPMethod;
+    path?: string;
+    query?: Req | undefined;
+    body?: Req | null | undefined;
+    headers?: Headers | undefined;
+  
+    maxRetries?: number;
+    stream?: boolean | undefined;
+    timeout?: number;
+  };
 export type FinalRequestOptions = RequestOptions & {
   method: HTTPMethod;
   path: string;
@@ -96,12 +79,20 @@ type ClientOptions = {
 type DefaultQuery = Record<string, unknown>;
 type PromiseOrValue<T> = T | Promise<T>;
 
-async function defaultParseResponse({ response }: APIResponseProps): Promise<any> {
-  const contentType = response.headers.get('content-type');
-  if (contentType?.includes('application/json')) {
-    return response.json();
-  }
-  return response.text();
+async function defaultParseResponse({ response, options }: APIResponseProps): Promise<any> {
+    if (options.stream) {
+        if (!response.body) {
+            throw new AI21Error('Response body is null');
+        }
+        return new Stream(response as any);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (contentType?.includes('application/json')) {
+        return response.json();
+    }
+
+    return response.text();
 }
 
 export class APIPromise<T> extends Promise<T> {
@@ -150,7 +141,6 @@ export class APIPromise<T> extends Promise<T> {
   }
 
 
-
 export abstract class APIClient {
     protected options: ClientOptions;
     protected apiKey: string;
@@ -180,24 +170,19 @@ export abstract class APIClient {
         this.apiKey = apiKey;
         this.options = options;
       }
-
-    protected get<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
+    get<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
         return this.makeRequest('get', path, opts);
     }
 
-    protected post<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
+    post<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
         return this.makeRequest('post', path, opts);
     }
 
-    protected patch<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
-        return this.makeRequest('patch', path, opts);
-    }
-
-    protected put<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
+    put<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
         return this.makeRequest('put', path, opts);
     }
 
-    protected delete<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
+    delete<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
         return this.makeRequest('delete', path, opts);
     }
 
@@ -238,13 +223,13 @@ export abstract class APIClient {
           path: string,
           opts?: PromiseOrValue<RequestOptions<Req>>
       ): APIPromise<Rsp> {
-          const options: FinalRequestOptions = {
+          const options = {
               method,
               path,
               ...opts
           };
           
-          return new APIPromise(this.performRequest(options));
+          return new APIPromise(this.performRequest(options as FinalRequestOptions));
       }
 
       private async performRequest(options: FinalRequestOptions): Promise<APIResponseProps> {
