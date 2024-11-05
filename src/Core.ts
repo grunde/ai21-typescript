@@ -150,16 +150,14 @@ export abstract class APIClient {
 
     constructor({
         baseURL,
-        maxRetries = 2,
-        timeout = 600000, // 10 minutes
-        // fetch: overridenFetch,
+        maxRetries = 3,
+        timeout = 300000,
         apiKey,
         options,
       }: {
         baseURL: string;
         maxRetries?: number | undefined;
         timeout: number | undefined;
-        // fetch: Fetch | undefined;
         apiKey: string;
         options: ClientOptions;
       }) {
@@ -186,8 +184,8 @@ export abstract class APIClient {
         return this.makeRequest('delete', path, opts);
     }
 
-      private getUserAgent(): string {
-        return `${this.constructor.name}/JS ${VERSION}`;
+    protected getUserAgent(): string {
+        return`AI21 Typescript SDK ${VERSION}`;
       }
 
       protected defaultHeaders(opts: FinalRequestOptions): Headers {
@@ -195,7 +193,6 @@ export abstract class APIClient {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           'User-Agent': this.getUserAgent(),
-        //   ...getPlatformHeaders(),
           ...this.authHeaders(opts),
         };
       }
@@ -255,7 +252,7 @@ export abstract class APIClient {
           return { response, options, controller };
       }
 
-      protected static isRunningInBrowser(): boolean {
+    protected static isRunningInBrowser(): boolean {
         return (
           typeof window !== 'undefined' &&
           typeof window.document !== 'undefined' &&
@@ -263,10 +260,4 @@ export abstract class APIClient {
         );
       }
 }
-export const readEnv = (env: string): string | undefined => {
-    if (typeof process !== 'undefined' && process.env) {
-      return process.env[env]?.trim() ?? undefined;
-    }
-    return undefined;
-  };
   
