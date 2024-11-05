@@ -10,9 +10,9 @@ export class AI21 extends Core.APIClient {
     private _options: AI21Options;
 
     constructor(
-        apiKey: string = process.env.AI21_API_KEY || '',
-        baseURL: string = process.env.AI21_BASE_URL || 'https://api.ai21.com/studio/v1',
-        via: string | null,
+        apiKey: string = process.env.AI21_API_KEY ?? '',
+        baseURL: string = process.env.AI21_BASE_URL ?? 'https://api.ai21.com/studio/v1',
+        via: string | null = null,
     ) {
         const options: AI21Options = {
             apiKey,
@@ -26,7 +26,7 @@ export class AI21 extends Core.APIClient {
             apiKey,
             options: {}
         });
-
+        this.apiKey = apiKey
         this._options = options;
     }
 
@@ -45,7 +45,7 @@ export class AI21 extends Core.APIClient {
     
     protected override getUserAgent(): string {
         let userAgent = super.getUserAgent();
-        
+
         if (this._options.via) {
             userAgent += ` via ${this._options.via}`;
         }
