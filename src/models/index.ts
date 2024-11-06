@@ -26,3 +26,12 @@ export {
     type ChatModel,
     type UsageInfo,
 } from "./chat";
+
+export {
+    type APIResponseProps,
+    type RequestOptions,
+    type FinalRequestOptions,
+    type HTTPMethod,
+    type DefaultQuery,
+    type PromiseOrValue,
+} from "./API";

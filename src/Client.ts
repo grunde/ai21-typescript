@@ -1,4 +1,5 @@
 import * as Core from "./Core";
+import * as Models from "./models";
 import { AI21EnvConfig } from "./EnvConfig";
 import { MissingAPIKeyError } from "./errors";
 import { Chat } from "./resources/chat";
@@ -45,13 +46,13 @@ export class AI21 extends Core.APIClient {
         this._options = options;
     }
 
-    protected override authHeaders(opts: Core.FinalRequestOptions): Core.Headers {
+    protected override authHeaders(opts: Models.FinalRequestOptions): Core.Headers {
         return {
             'Authorization': `Bearer ${this.apiKey}`
         };
     }
 
-    protected override defaultHeaders(opts: Core.FinalRequestOptions): Core.Headers {
+    protected override defaultHeaders(opts: Models.FinalRequestOptions): Core.Headers {
         return {
           ...super.defaultHeaders(opts),
           'User-Agent': this.getUserAgent(),

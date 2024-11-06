@@ -1,60 +1,15 @@
 import { AI21Error } from "./errors.js";
 import { VERSION } from "./version.js";
-import { BlobLike } from "formdata-node";
-import { Readable } from "stream";
+
 import fetch from 'node-fetch';
 import { HeadersInit } from "node-fetch";
-import { Response } from "node-fetch";
-import { Stream } from "./Streaming";
+import { RequestOptions, FinalRequestOptions, APIResponseProps, HTTPMethod, PromiseOrValue, DefaultQuery } from "./models";
+import { APIPromise } from "./APIPromise";
 
-// export type Fetch = (url: RequestInfo, init?: RequestInit) => Promise<Response>;
 export type Headers = Record<string, string | null | undefined>;
 
-type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
-// export type RequestClient = { fetch: Fetch };
 
-
-type APIResponseProps = {
-    response: Response;
-    options: FinalRequestOptions;
-    controller: AbortController;
-  };
-
-  export type RequestOptions<
-  Req = unknown | Record<string, unknown> | Readable | BlobLike | ArrayBufferView | ArrayBuffer,
-> = {
-    method?: HTTPMethod;
-    path?: string;
-    query?: Req | undefined;
-    body?: Req | null | undefined;
-    headers?: Headers | undefined;
-  
-    maxRetries?: number;
-    stream?: boolean | undefined;
-    timeout?: number;
-  };
-export type FinalRequestOptions = RequestOptions & {
-  method: HTTPMethod;
-  path: string;
-};
-export const createResponseHeaders = (
-    headers: Awaited<ReturnType<any>>['headers'],
-  ): Record<string, string> => {
-    return new Proxy(
-      Object.fromEntries(
-        // @ts-ignore
-        headers.entries(),
-      ),
-      {
-        get(target, name) {
-          const key = name.toString();
-          return target[key.toLowerCase()] || target[key];
-        },
-      },
-    );
-  };
-
-  const validatePositiveInteger = (name: string, n: unknown): number => {
+const validatePositiveInteger = (name: string, n: unknown): number => {
     if (typeof n !== 'number' || !Number.isInteger(n)) {
       throw new AI21Error(`${name} must be an integer`);
     }
@@ -75,70 +30,6 @@ type ClientOptions = {
     defaultHeaders?: Headers;
     dangerouslyAllowBrowser?: boolean;
 };
-
-type DefaultQuery = Record<string, unknown>;
-type PromiseOrValue<T> = T | Promise<T>;
-
-async function defaultParseResponse({ response, options }: APIResponseProps): Promise<any> {
-    if (options.stream) {
-        if (!response.body) {
-            throw new AI21Error('Response body is null');
-        }
-        return new Stream(response as any);
-    }
-
-    const contentType = response.headers.get('content-type');
-    if (contentType?.includes('application/json')) {
-        return response.json();
-    }
-
-    return response.text();
-}
-
-export class APIPromise<T> extends Promise<T> {
-    constructor(
-      private responsePromise: Promise<APIResponseProps>,
-      private parseResponse: (props: APIResponseProps) => Promise<T> = defaultParseResponse,
-    ) {
-      super((resolve) => resolve(null as any));
-    }
-  
-    /**
-     * Gets the raw Response instance
-     */
-    asResponse(): Promise<Response> {
-      return this.responsePromise.then((p) => p.response);
-    }
-  
-    /**
-     * Gets both the parsed response data and the raw Response instance
-     */
-    async withResponse(): Promise<{ data: T; response: Response }> {
-      const [data, response] = await Promise.all([this.parse(), this.asResponse()]);
-      return { data, response };
-    }
-  
-    private parse(): Promise<T> {
-      return this.responsePromise.then(this.parseResponse);
-    }
-  
-    override then<TResult1 = T, TResult2 = never>(
-      onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-      onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
-    ): Promise<TResult1 | TResult2> {
-      return this.parse().then(onfulfilled, onrejected);
-    }
-  
-    override catch<TResult = never>(
-      onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null,
-    ): Promise<T | TResult> {
-      return this.parse().catch(onrejected);
-    }
-  
-    override finally(onfinally?: (() => void) | null): Promise<T> {
-      return this.parse().finally(onfinally);
-    }
-  }
 
 
 export abstract class APIClient {

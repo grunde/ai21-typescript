@@ -1,32 +1,31 @@
-import * as Core from '../../Core';
+import { APIPromise } from '../../APIPromise';
 import * as Models from '../../models';
 import { APIResource } from "../../resource";
 import { Stream } from '../../Streaming';
 
-
 export class Completions extends APIResource {
     create(
         body: Models.ChatCompletionCreateParamsNonStreaming,
-        options?: Core.RequestOptions,
-      ): Core.APIPromise<Models.ChatCompletionResponse>;
+        options?: Models.RequestOptions,
+      ): APIPromise<Models.ChatCompletionResponse>;
     
       create(
         body: Models.ChatCompletionCreateParamsStreaming,
-        options?: Core.RequestOptions,
-      ): Core.APIPromise<Stream<Models.ChatCompletionChunk>>;
+        options?: Models.RequestOptions,
+      ): APIPromise<Stream<Models.ChatCompletionChunk>>;
 
       create(
         body: Models.ChatCompletionCreateParams,
-        options?: Core.RequestOptions,
-      ): Core.APIPromise<Stream<Models.ChatCompletionChunk> | Models.ChatCompletionResponse>;
+        options?: Models.RequestOptions,
+      ): APIPromise<Stream<Models.ChatCompletionChunk> | Models.ChatCompletionResponse>;
 
-    create(body: Models.ChatCompletionCreateParams, options?: Core.RequestOptions) {
+    create(body: Models.ChatCompletionCreateParams, options?: Models.RequestOptions) {
         return this._client.post<
             Models.ChatCompletionCreateParams,
             Models.ChatCompletionResponse
         >(
             "/chat/completions",
-            {body, ...options, stream: body.stream ?? false} as Core.RequestOptions<Models.ChatCompletionCreateParams>
-        ) as Core.APIPromise<Models.ChatCompletionResponse> | Core.APIPromise<Stream<Models.ChatCompletionChunk>>;
+            {body, ...options, stream: body.stream ?? false} as Models.RequestOptions<Models.ChatCompletionCreateParams>
+        ) as APIPromise<Models.ChatCompletionResponse> | APIPromise<Stream<Models.ChatCompletionChunk>>;
     }
 }
