@@ -10,7 +10,7 @@ import {
   HTTPMethod,
   PromiseOrValue,
   DefaultQuery,
-} from './models';
+} from './types/index.js';
 import { AI21EnvConfig } from './EnvConfig.js';
 import { handleAPIResponse } from './ResponseHandler.js';
 

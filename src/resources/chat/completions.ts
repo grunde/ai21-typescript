@@ -1,4 +1,4 @@
-import * as Models from '../../models';
+import * as Models from '../../types';
 import { APIResource } from '../../APIResource';
 import { Stream } from '../../Streaming';
 

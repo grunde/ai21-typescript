@@ -1,5 +1,5 @@
 import * as Core from './Core';
-import * as Models from './models';
+import * as Models from './types';
 import { AI21EnvConfig } from './EnvConfig';
 import { MissingAPIKeyError } from './errors';
 import { Chat } from './resources/chat';
