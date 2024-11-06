@@ -18,7 +18,7 @@
     "lint": "npx eslint 'src/**/*.{ts,tsx}' --no-ignore",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "npm run build",
-    "example": "npx tsx src/script.ts"
+    "example": "npx tsx src/example.ts"
   },
   "files": [
     "dist"

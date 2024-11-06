@@ -1,5 +1,8 @@
 import { AI21 } from './Client';
 
+/*
+  This is a temporary example to test the API streaming/non-streaming functionality.
+*/
 async function main() {
   const client = new AI21('L40MQGXxfbtQVnCRqNTTKaojD8Snt7nQ');
 
