@@ -2,9 +2,10 @@ import { DocumentSchema } from "./DocumentSchema";
 import { ToolDefinition } from "./ToolDefinition";
 import { ChatMessageParam } from "./ChatMessage";
 import { ResponseFormat } from "./ResponseFormat";
+import { ChatModel } from "./ChatModel";
 
 export interface ChatCompletionCreateParamsBase {
-    model: string;
+    model: ChatModel;
     messages: ChatMessageParam[];
     max_tokens?: number | null;
     temperature?: number | null;

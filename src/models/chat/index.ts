@@ -49,3 +49,7 @@ export {
 export {
     type ToolFunction,
 } from "./ToolFunction";
+
+export {
+    type ChatModel,
+} from "./ChatModel";
