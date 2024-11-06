@@ -143,7 +143,6 @@ export class APIPromise<T> extends Promise<T> {
 
 export abstract class APIClient {
     protected options: ClientOptions;
-    protected apiKey: string;
     protected baseURL: string;
     protected maxRetries: number;
     protected timeout: number;
@@ -165,7 +164,6 @@ export abstract class APIClient {
         this.maxRetries = validatePositiveInteger('maxRetries', maxRetries);
         this.timeout = validatePositiveInteger('timeout', timeout);
     
-        this.apiKey = apiKey;
         this.options = options;
       }
     get<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {

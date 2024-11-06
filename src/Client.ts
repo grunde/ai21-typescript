@@ -1,33 +1,47 @@
-import { STUDIO_BASE_URL } from "./Constants";
 import * as Core from "./Core";
+import { AI21EnvConfig } from "./EnvConfig";
+import { MissingAPIKeyError } from "./errors";
 import { Chat } from "./resources/chat";
 
 export interface AI21Options {
     apiKey: string;
     baseURL: string;
     via: string | null;
+    timeout: number;
+    maxRetries: number;
 }
 export class AI21 extends Core.APIClient {
+    private apiKey: string;
     private _options: AI21Options;
 
     constructor(
-        apiKey: string = process.env.AI21_API_KEY ?? '',
-        baseURL: string = process.env.AI21_BASE_URL ?? STUDIO_BASE_URL,
+        apiKey: string = AI21EnvConfig.API_KEY,
+        baseURL: string = AI21EnvConfig.BASE_URL,
+        timeout: number = AI21EnvConfig.TIMEOUT_SECONDS,
+        maxRetries: number = AI21EnvConfig.MAX_RETRIES,
         via: string | null = null,
     ) {
         const options: AI21Options = {
             apiKey,
             baseURL,
             via,
+            timeout,
+            maxRetries,
         };
 
         super({
             baseURL,
-            timeout: 60000,
+            timeout,
             apiKey,
+            maxRetries,
             options: {}
         });
-        this.apiKey = apiKey
+
+        if (!apiKey) {
+            throw new MissingAPIKeyError();
+        }
+
+        this.apiKey = apiKey;
         this._options = options;
     }
 
