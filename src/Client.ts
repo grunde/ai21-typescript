@@ -1,7 +1,7 @@
 import * as Core from "./Core";
 import * as Models from "./models";
 import { AI21EnvConfig } from "./EnvConfig";
-import { MissingAPIKeyError } from "./Errors";
+import { MissingAPIKeyError } from "./errors";
 import { Chat } from "./resources/chat";
 
 export interface AI21Options {

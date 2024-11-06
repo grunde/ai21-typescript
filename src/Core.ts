@@ -1,4 +1,4 @@
-import { AI21Error } from "./Errors.js";
+import { AI21Error } from "./errors.js";
 import { VERSION } from "./version.js";
 
 import fetch from 'node-fetch';
