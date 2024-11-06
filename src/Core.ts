@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import { HeadersInit } from "node-fetch";
 import { RequestOptions, FinalRequestOptions, APIResponseProps, HTTPMethod, PromiseOrValue, DefaultQuery } from "./models";
 import { APIPromise } from "./APIPromise";
+import { AI21EnvConfig } from "./EnvConfig.js";
 
 export type Headers = Record<string, string | null | undefined>;
 
@@ -40,15 +41,13 @@ export abstract class APIClient {
 
     constructor({
         baseURL,
-        maxRetries = 3,
-        timeout = 300000,
-        apiKey,
+        maxRetries = AI21EnvConfig.MAX_RETRIES,
+        timeout = AI21EnvConfig.TIMEOUT_SECONDS,
         options,
       }: {
         baseURL: string;
         maxRetries?: number | undefined;
         timeout: number | undefined;
-        apiKey: string;
         options: ClientOptions;
       }) {
         this.baseURL = baseURL;
@@ -74,10 +73,13 @@ export abstract class APIClient {
     }
 
     protected getUserAgent(): string {
-        return`AI21 Typescript SDK ${VERSION}`;
-      }
+        const platform = this.isRunningInBrowser() 
+          ? `browser/${typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown'}`
+          : `node/${process.version}`;
+        return `AI21 Typescript SDK ${VERSION} ${platform}`;
+    }
 
-      protected defaultHeaders(opts: FinalRequestOptions): Headers {
+    protected defaultHeaders(opts: FinalRequestOptions): Headers {
         return {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -141,7 +143,7 @@ export abstract class APIClient {
           return { response, options, controller };
       }
 
-    protected static isRunningInBrowser(): boolean {
+    protected isRunningInBrowser(): boolean {
         return (
           typeof window !== 'undefined' &&
           typeof window.document !== 'undefined' &&

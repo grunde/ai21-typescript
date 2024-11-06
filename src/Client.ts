@@ -33,7 +33,6 @@ export class AI21 extends Core.APIClient {
         super({
             baseURL,
             timeout,
-            apiKey,
             maxRetries,
             options: {}
         });
