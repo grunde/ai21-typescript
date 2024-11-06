@@ -103,16 +103,6 @@ export abstract class APIClient {
     return this.options.defaultQuery;
   }
 
-  protected stringifyQuery(query: Record<string, unknown>): string {
-    const params = new URLSearchParams();
-    for (const [key, value] of Object.entries(query)) {
-      if (value !== undefined && value !== null) {
-        params.append(key, String(value));
-      }
-    }
-    return params.toString();
-  }
-
   private makeRequest<Req, Rsp>(
     method: HTTPMethod,
     path: string,
