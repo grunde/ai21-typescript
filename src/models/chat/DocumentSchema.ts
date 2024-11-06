@@ -1,11 +1,9 @@
 export interface DocumentSchema {
-    content: string;
-    id?: string;
-    metadata?: Record<string, string>;
+  content: string;
+  id?: string;
+  metadata?: Record<string, string>;
 }
 
 export declare namespace ChatCompletions {
-    export {
-        type DocumentSchema,
-    }
+  export { type DocumentSchema };
 }

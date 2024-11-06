@@ -1,38 +1,31 @@
-import { ToolCall } from "./ToolCall";
+import { ToolCall } from './ToolCall';
 
 export interface ChatMessage {
-    role: string;
-    content: string;
+  role: string;
+  content: string;
 }
 
 export interface AssistantMessage extends ChatMessage {
-    role: "assistant";
-    content: string;
-    tool_calls?: ToolCall[];
+  role: 'assistant';
+  content: string;
+  tool_calls?: ToolCall[];
 }
 
 export interface ToolMessage extends ChatMessage {
-    role: "tool";
-    tool_call_id: string;
+  role: 'tool';
+  tool_call_id: string;
 }
 
 export interface UserMessage extends ChatMessage {
-    role: "user";
+  role: 'user';
 }
 
 export interface SystemMessage extends ChatMessage {
-    role: "system";
+  role: 'system';
 }
 
 export type ChatMessageParam = UserMessage | AssistantMessage | ToolMessage | SystemMessage | ChatMessage;
 
-
 export declare namespace ChatCompletions {
-    export {
-        type ChatMessage,
-        type AssistantMessage,
-        type ToolMessage,
-        type UserMessage,
-        type SystemMessage,
-    }
+  export { type ChatMessage, type AssistantMessage, type ToolMessage, type UserMessage, type SystemMessage };
 }

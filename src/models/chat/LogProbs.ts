@@ -1,22 +1,18 @@
 export interface TopTokenData {
-    token: string;
-    logprob: number;
+  token: string;
+  logprob: number;
 }
 
 export interface LogprobsData {
-    token: string;
-    logprob: number;
-    top_logprobs: TopTokenData[];
+  token: string;
+  logprob: number;
+  top_logprobs: TopTokenData[];
 }
 
 export interface Logprobs {
-    content: LogprobsData;
+  content: LogprobsData;
 }
 
 export declare namespace ChatCompletions {
-    export {
-        type Logprobs,
-        type LogprobsData,
-        type TopTokenData,
-    }
+  export { type Logprobs, type LogprobsData, type TopTokenData };
 }

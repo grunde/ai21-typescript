@@ -1,4 +1,1 @@
-export {
-    Chat,
-    Completions
-} from "./chat";
+export { Chat, Completions } from './chat';
