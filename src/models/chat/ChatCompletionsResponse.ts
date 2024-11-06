@@ -23,11 +23,7 @@ export interface ChatCompletionResponseChoice {
 export interface ChatCompletionChunk {
     id: string;
     choices: ChoicesChunk[];
-    usage?: {
-        prompt_tokens: number;
-        completion_tokens: number;
-        total_tokens: number;
-    };
+    usage?: UsageInfo;
 }
 
 export interface ChoiceDelta {
@@ -42,6 +38,12 @@ export interface ChoicesChunk {
     finish_reason?: string;
 }
 
+export interface UsageInfo {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+}
+
 export declare namespace ChatCompletions {
     export {
         type ChatCompletionResponseChoice,
@@ -49,5 +51,6 @@ export declare namespace ChatCompletions {
         type ChoiceDelta,
         type ChoicesChunk,
         type ChatCompletionChunk,
+        type UsageInfo,
     }
 }

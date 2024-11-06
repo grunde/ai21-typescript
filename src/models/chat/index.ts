@@ -10,6 +10,7 @@ export {
     type ChoiceDelta,
     type ChoicesChunk,
     type ChatCompletionChunk,
+    type UsageInfo,
 } from "./ChatCompletionsResponse";
 
 export {

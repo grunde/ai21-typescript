@@ -24,4 +24,5 @@ export {
     type ChoicesChunk,
     type ChatCompletionChunk,
     type ChatModel,
+    type UsageInfo,
 } from "./chat";
