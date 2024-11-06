@@ -1,3 +1,4 @@
+import { STUDIO_BASE_URL } from "./Constants";
 import * as Core from "./Core";
 import { Chat } from "./resources/chat";
 
@@ -11,7 +12,7 @@ export class AI21 extends Core.APIClient {
 
     constructor(
         apiKey: string = process.env.AI21_API_KEY ?? '',
-        baseURL: string = process.env.AI21_BASE_URL ?? 'https://api.ai21.com/studio/v1',
+        baseURL: string = process.env.AI21_BASE_URL ?? STUDIO_BASE_URL,
         via: string | null = null,
     ) {
         const options: AI21Options = {
