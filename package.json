@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint . .ts,.tsx",
+    "lint": "npx eslint 'src/**/*.{ts,tsx}' --no-ignore",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "npm run build",
     "example": "npx tsx src/script.ts"

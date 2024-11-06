@@ -7,8 +7,7 @@ export class MissingAPIKeyError extends AI21Error {
 }
 
 export class StreamingDecodeError extends Error {
-    constructor(chunk: string) {
-      super(`Failed to decode chunk: ${chunk}`);
+  constructor(chunk: string) {
+    super(`Failed to decode chunk: ${chunk}`);
   }
 }
-    

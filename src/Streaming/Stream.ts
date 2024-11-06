@@ -5,7 +5,6 @@ import { SSEDecoder } from './SSEDecoder';
 import { SSE_DONE_MSG } from './Consts';
 import { StreamingDecodeError } from '../errors';
 
-
 function getStreamMessage<T>(chunk: string): T {
   try {
     return JSON.parse(chunk);
