@@ -42,14 +42,3 @@ export interface UsageInfo {
   completion_tokens: number;
   total_tokens: number;
 }
-
-export declare namespace ChatCompletions {
-  export {
-    type ChatCompletionResponseChoice,
-    type ChatCompletionResponse,
-    type ChoiceDelta,
-    type ChoicesChunk,
-    type ChatCompletionChunk,
-    type UsageInfo,
-  };
-}

@@ -3,7 +3,3 @@ export interface DocumentSchema {
   id?: string;
   metadata?: Record<string, string>;
 }
-
-export declare namespace ChatCompletions {
-  export { type DocumentSchema };
-}

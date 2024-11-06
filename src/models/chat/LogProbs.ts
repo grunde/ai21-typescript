@@ -12,7 +12,3 @@ export interface LogprobsData {
 export interface Logprobs {
   content: LogprobsData;
 }
-
-export declare namespace ChatCompletions {
-  export { type Logprobs, type LogprobsData, type TopTokenData };
-}

@@ -24,7 +24,7 @@ export class DefaultSSEDecoder implements SSEDecoder {
       throw new Error('Response body is null');
     }
 
-    const webReadableStream = Readable.toWeb(response.body as any) as ReadableStream;
+    const webReadableStream = Readable.toWeb(response.body as Readable);
     const reader = webReadableStream.getReader();
 
     let buffer = '';

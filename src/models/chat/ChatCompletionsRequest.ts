@@ -16,7 +16,7 @@ export interface ChatCompletionCreateParamsBase {
   tools?: ToolDefinition[] | null;
   response_format?: ResponseFormat | null;
   documents?: DocumentSchema[] | null;
-  [key: string]: any;
+  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface ChatCompletionCreateParamsNonStreaming extends ChatCompletionCreateParamsBase {
@@ -30,11 +30,3 @@ export interface ChatCompletionCreateParamsStreaming extends ChatCompletionCreat
 export type ChatCompletionCreateParams =
   | ChatCompletionCreateParamsNonStreaming
   | ChatCompletionCreateParamsStreaming;
-
-export declare namespace ChatCompletions {
-  export {
-    type ChatCompletionCreateParams,
-    type ChatCompletionCreateParamsNonStreaming,
-    type ChatCompletionCreateParamsStreaming,
-  };
-}

@@ -5,7 +5,3 @@ export interface ToolCall {
   function: ToolFunction;
   type: 'function';
 }
-
-export declare namespace ChatCompletions {
-  export { type ToolCall };
-}

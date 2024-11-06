@@ -1,5 +1,4 @@
 import { Response as NodeResponse } from 'node-fetch';
-import { Readable } from 'stream';
 import { DefaultSSEDecoder } from './SSEDecoder';
 import { SSEDecoder } from './SSEDecoder';
 import { SSE_DONE_MSG } from './Consts';
@@ -8,7 +7,7 @@ import { StreamingDecodeError } from '../errors';
 function getStreamMessage<T>(chunk: string): T {
   try {
     return JSON.parse(chunk);
-  } catch (e) {
+  } catch {
     throw new StreamingDecodeError(chunk);
   }
 }

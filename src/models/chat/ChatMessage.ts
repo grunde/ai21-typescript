@@ -25,7 +25,3 @@ export interface SystemMessage extends ChatMessage {
 }
 
 export type ChatMessageParam = UserMessage | AssistantMessage | ToolMessage | SystemMessage | ChatMessage;
-
-export declare namespace ChatCompletions {
-  export { type ChatMessage, type AssistantMessage, type ToolMessage, type UserMessage, type SystemMessage };
-}

@@ -11,10 +11,6 @@ export interface FunctionToolDefinition {
 
 export interface ToolParameters {
   type: 'object';
-  properties: Record<string, any>;
+  properties: Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   required?: string[];
-}
-
-export declare namespace ChatCompletions {
-  export { type ToolDefinition, type FunctionToolDefinition, type ToolParameters };
 }

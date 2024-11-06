@@ -45,7 +45,8 @@ export class AI21 extends Core.APIClient {
     this._options = options;
   }
 
-  protected override authHeaders(opts: Models.FinalRequestOptions): Core.Headers {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected override authHeaders(_: Models.FinalRequestOptions): Core.Headers {
     return {
       Authorization: `Bearer ${this.apiKey}`,
     };

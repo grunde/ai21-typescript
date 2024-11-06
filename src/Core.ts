@@ -2,7 +2,7 @@ import { AI21Error } from './errors.js';
 import { VERSION } from './version.js';
 
 import fetch from 'node-fetch';
-import { HeadersInit } from 'node-fetch';
+import { HeadersInit, RequestInit } from 'node-fetch';
 import {
   RequestOptions,
   FinalRequestOptions,
@@ -94,6 +94,7 @@ export abstract class APIClient {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected authHeaders(opts: FinalRequestOptions): Headers {
     return {};
   }
@@ -123,7 +124,9 @@ export abstract class APIClient {
       ...opts,
     };
 
-    return this.performRequest(options as FinalRequestOptions).then(handleAPIResponse);
+    return this.performRequest(options as FinalRequestOptions).then(
+      (response) => handleAPIResponse<Rsp>(response) as Rsp,
+    );
   }
 
   private async performRequest(options: FinalRequestOptions): Promise<APIResponseProps> {
@@ -138,7 +141,7 @@ export abstract class APIClient {
     const response = await fetch(url, {
       method: options.method,
       headers: headers as HeadersInit,
-      signal: controller.signal as any, // Type cast to avoid AbortSignal compatibility issue
+      signal: controller.signal as RequestInit['signal'],
       body: options.body ? JSON.stringify(options.body) : undefined,
     });
 
