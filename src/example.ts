@@ -1,4 +1,4 @@
-import { AI21 } from './Client';
+import { AI21 } from './ai21';
 
 /*
   This is a temporary example to test the API streaming/non-streaming functionality.

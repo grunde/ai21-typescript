@@ -1,9 +1,9 @@
-import type { AI21 } from './index';
+import type { APIClient } from './APIClient';
 
 export class APIResource {
-  protected _client: AI21;
+  protected _client: APIClient;
 
-  constructor(client: AI21) {
+  constructor(client: APIClient) {
     this._client = client;
   }
 }

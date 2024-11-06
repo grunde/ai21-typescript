@@ -1,8 +1,8 @@
-import * as Core from './Core';
-import * as Models from './types';
+import * as Types from './types';
 import { AI21EnvConfig } from './EnvConfig';
 import { MissingAPIKeyError } from './errors';
 import { Chat } from './resources/chat';
+import { APIClient } from './APIClient';
 
 export interface AI21Options {
   apiKey: string;
@@ -11,7 +11,7 @@ export interface AI21Options {
   timeout: number;
   maxRetries: number;
 }
-export class AI21 extends Core.APIClient {
+export class AI21 extends APIClient {
   private apiKey: string;
   private _options: AI21Options;
 
@@ -46,13 +46,13 @@ export class AI21 extends Core.APIClient {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected override authHeaders(_: Models.FinalRequestOptions): Core.Headers {
+  protected override authHeaders(_: Types.FinalRequestOptions): Types.Headers {
     return {
       Authorization: `Bearer ${this.apiKey}`,
     };
   }
 
-  protected override defaultHeaders(opts: Models.FinalRequestOptions): Core.Headers {
+  protected override defaultHeaders(opts: Types.FinalRequestOptions): Types.Headers {
     return {
       ...super.defaultHeaders(opts),
       'User-Agent': this.getUserAgent(),

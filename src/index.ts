@@ -1,4 +1,4 @@
-export { AI21 } from './Client';
+export { AI21 } from './ai21';
 export { VERSION } from './version';
 export { RequestOptions } from './types';
 export { AI21Error, MissingAPIKeyError } from './errors';

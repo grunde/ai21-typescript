@@ -1,5 +1,5 @@
-import { AI21Error } from './errors.js';
-import { VERSION } from './version.js';
+import { AI21Error } from './errors';
+import { VERSION } from './version';
 
 import fetch from 'node-fetch';
 import { HeadersInit, RequestInit } from 'node-fetch';
@@ -10,11 +10,10 @@ import {
   HTTPMethod,
   PromiseOrValue,
   DefaultQuery,
+  Headers,
 } from './types/index.js';
 import { AI21EnvConfig } from './EnvConfig.js';
 import { handleAPIResponse } from './ResponseHandler.js';
-
-export type Headers = Record<string, string | null | undefined>;
 
 const validatePositiveInteger = (name: string, n: unknown): number => {
   if (typeof n !== 'number' || !Number.isInteger(n)) {

@@ -15,10 +15,14 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "unused-deps": "npx depcheck --json | jq '.dependencies == []'",
+    "clean-build": "rm -rf ./dist",
     "lint": "npx eslint 'src/**/*.{ts,tsx}' --no-ignore",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "npm run build",
-    "example": "npx tsx src/example.ts"
+    "example": "npx tsx src/example.ts",
+    "circular": "madge --circular --extensions ts src",
+    "quality": "npm run circular && npm run lint && tsc --noEmit && npm run format && npm run unused-deps"
   },
   "files": [
     "dist"
@@ -32,9 +36,6 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^18.11.18",
-    "abort-controller": "^3.0.0",
-    "agentkeepalive": "^4.5.0",
-    "form-data-encoder": "^4.0.2",
     "formdata-node": "^6.0.3",
     "node-fetch": "^2.7.0"
   },
@@ -47,6 +48,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.12.0",
+    "madge": "^6.1.0",
     "prettier": "^3.3.3",
     "ts-node": "^10.5.0",
     "tsc-multi": "^1.1.0",

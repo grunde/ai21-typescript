@@ -31,3 +31,4 @@ export type FinalRequestOptions = RequestOptions & {
 
 export type DefaultQuery = Record<string, unknown>;
 export type PromiseOrValue<T> = T | Promise<T>;
+export type Headers = Record<string, string | null | undefined>;
