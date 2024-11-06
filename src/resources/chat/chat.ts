@@ -1,5 +1,5 @@
-import { APIResource } from "../../resource";
-import { Completions } from "./completions";
+import { APIResource } from "../../APIResource";
+import { Completions } from "./Completions";
 
 
 export class Chat extends APIResource {

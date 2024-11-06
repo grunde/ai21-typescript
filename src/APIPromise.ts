@@ -1,5 +1,5 @@
 import { APIResponseProps } from "./models";
-import { AI21Error } from "./errors";
+import { AI21Error } from "./Errors";
 import { Stream } from "./Streaming";
 import { Response } from "node-fetch";
 

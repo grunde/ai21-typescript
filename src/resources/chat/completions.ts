@@ -1,6 +1,6 @@
 import { APIPromise } from '../../APIPromise';
 import * as Models from '../../models';
-import { APIResource } from "../../resource";
+import { APIResource } from "../../APIResource";
 import { Stream } from '../../Streaming';
 
 export class Completions extends APIResource {

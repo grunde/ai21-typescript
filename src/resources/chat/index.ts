@@ -1,5 +1,4 @@
 export {
      Chat,
-     type ChatModel
-} from "./chat";
-export { Completions } from "./completions";
+} from "./Chat";
+export { Completions } from "./Completions";
