@@ -1,2 +1,2 @@
 export { Chat } from './chat';
-export { Completions } from './Completions';
+export { Completions } from './completions';
