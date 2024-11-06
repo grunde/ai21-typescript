@@ -11,8 +11,8 @@ import {
   PromiseOrValue,
   DefaultQuery,
 } from './models';
-import { APIPromise } from './APIPromise';
 import { AI21EnvConfig } from './EnvConfig.js';
+import { handleAPIResponse } from './ResponseHandler.js';
 
 export type Headers = Record<string, string | null | undefined>;
 
@@ -61,19 +61,19 @@ export abstract class APIClient {
 
     this.options = options;
   }
-  get<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
+  get<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): Promise<Rsp> {
     return this.makeRequest('get', path, opts);
   }
 
-  post<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
+  post<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): Promise<Rsp> {
     return this.makeRequest('post', path, opts);
   }
 
-  put<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
+  put<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): Promise<Rsp> {
     return this.makeRequest('put', path, opts);
   }
 
-  delete<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): APIPromise<Rsp> {
+  delete<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): Promise<Rsp> {
     return this.makeRequest('delete', path, opts);
   }
 
@@ -116,14 +116,14 @@ export abstract class APIClient {
     method: HTTPMethod,
     path: string,
     opts?: PromiseOrValue<RequestOptions<Req>>,
-  ): APIPromise<Rsp> {
+  ): Promise<Rsp> {
     const options = {
       method,
       path,
       ...opts,
     };
 
-    return new APIPromise(this.performRequest(options as FinalRequestOptions));
+    return this.performRequest(options as FinalRequestOptions).then(handleAPIResponse);
   }
 
   private async performRequest(options: FinalRequestOptions): Promise<APIResponseProps> {
@@ -155,3 +155,4 @@ export abstract class APIClient {
     );
   }
 }
+
