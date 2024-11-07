@@ -57,7 +57,6 @@ for await (const chunk of stream) {
 
 The `AI21` class provides a `chat` property that gives you access to the Chat API. You can use this to generate text, complete prompts, and more.
 
-
 ## Configuration
 
 The `AI21` class accepts several configuration options, which you can pass in when creating a new instance:
