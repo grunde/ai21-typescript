@@ -118,3 +118,8 @@ fabric.properties
 # https://github.com/github/gitignore/blob/master/Global/Patch.gitignore
 *.orig
 *.rej
+
+dist/
+node_modules/
+.cursorrules
+.vscode/

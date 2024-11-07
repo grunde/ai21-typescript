@@ -1,0 +1,61 @@
+{
+  "name": "ai21",
+  "version": "1.0.0",
+  "description": "AI21 TypeScript SDK",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "unused-deps": "npx depcheck --json | jq '.dependencies == []'",
+    "clean-build": "rm -rf ./dist",
+    "lint": "npx eslint 'src/**/*.{ts,tsx}' --no-ignore",
+    "format": "prettier --write \"(src|test)/**\" --no-error-on-unmatched-pattern",
+    "prepare": "npm run build",
+    "example": "npx tsx src/example.ts",
+    "circular": "madge --circular --extensions ts src",
+    "quality": "npm run circular && npm run lint && tsc --noEmit && npm run format && npm run unused-deps",
+    "quality:fix": "npm run circular && npm run lint -- --fix && tsc --noEmit && npm run format"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "ai21",
+    "sdk",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^18.11.18",
+    "formdata-node": "^6.0.3",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "@types/node-fetch": "^2.6.11",
+    "@typescript-eslint/eslint-plugin": "^8.13.0",
+    "@typescript-eslint/parser": "^8.13.0",
+    "eslint": "^9.14.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.12.0",
+    "madge": "^6.1.0",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.5.0",
+    "tsc-multi": "^1.1.0",
+    "tsconfig-paths": "^4.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^4.8.2",
+    "typescript-eslint": "^8.13.0"
+  }
+}
