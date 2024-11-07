@@ -3,8 +3,8 @@ import { AI21Error } from './errors';
 import { Stream } from './Streaming';
 import { Response } from 'node-fetch';
 
-type APIResponse<T = unknown> = {
-  data: T;
+type APIResponse<T> = {
+  data?: T;
   response: Response;
 };
 
@@ -20,7 +20,7 @@ export async function handleAPIResponse<T>({
   }
 
   const contentType = response.headers.get('content-type');
-  const data = contentType?.includes('application/json') ? await response.json() : await response.text();
+  const data = contentType?.includes('application/json') ? await response.json() : null;
 
   return {
     data,

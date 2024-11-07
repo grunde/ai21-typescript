@@ -19,7 +19,7 @@ export class Completions extends APIResource {
   ): Promise<Stream<Models.ChatCompletionChunk> | Models.ChatCompletionResponse>;
 
   create(body: Models.ChatCompletionCreateParams, options?: Models.RequestOptions) {
-    return this._client.post<Models.ChatCompletionCreateParams, Models.ChatCompletionResponse>(
+    return this.client.post<Models.ChatCompletionCreateParams, Models.ChatCompletionResponse>(
       '/chat/completions',
       {
         body,

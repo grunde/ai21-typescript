@@ -8,7 +8,6 @@ import {
   FinalRequestOptions,
   APIResponseProps,
   HTTPMethod,
-  PromiseOrValue,
   DefaultQuery,
   Headers,
 } from './types/index.js';
@@ -43,19 +42,19 @@ export abstract class APIClient {
     this.maxRetries = validatePositiveInteger('maxRetries', maxRetries);
     this.timeout = validatePositiveInteger('timeout', timeout);
   }
-  get<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): Promise<Rsp> {
+  get<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('get', path, opts);
   }
 
-  post<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): Promise<Rsp> {
+  post<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('post', path, opts);
   }
 
-  put<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): Promise<Rsp> {
+  put<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('put', path, opts);
   }
 
-  delete<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): Promise<Rsp> {
+  delete<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('delete', path, opts);
   }
 
@@ -83,11 +82,7 @@ export abstract class APIClient {
 
   protected abstract defaultQuery(): DefaultQuery | undefined;
 
-  private makeRequest<Req, Rsp>(
-    method: HTTPMethod,
-    path: string,
-    opts?: PromiseOrValue<RequestOptions<Req>>,
-  ): Promise<Rsp> {
+  private makeRequest<Req, Rsp>(method: HTTPMethod, path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     const options = {
       method,
       path,
@@ -116,7 +111,7 @@ export abstract class APIClient {
     });
 
     if (!response.ok) {
-      throw new AI21Error(`Request failed with status ${response.status}`);
+      throw new AI21Error(`Request failed with status ${response.status}. ${await response.text()}`);
     }
 
     return { response, options, controller };

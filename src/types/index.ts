@@ -33,6 +33,5 @@ export {
   type FinalRequestOptions,
   type HTTPMethod,
   type DefaultQuery,
-  type PromiseOrValue,
   type Headers,
 } from './API';
