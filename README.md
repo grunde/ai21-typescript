@@ -1,76 +1,79 @@
-# Git Repository Template
+# AI21 API Client
 
-[Template](https://github.com/DynamicYield/template) is a [*Git repository template*](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for bootstrapping your repositories.
+The AI21 API Client is a TypeScript library that provides a convenient interface for interacting with the AI21 API. It abstracts away the low-level details of making API requests and handling responses, allowing developers to focus on building their applications.
 
-Bundled support for:
+## Installation
 
-- [Code Owners](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#about-code-owners) — Automatically requested for review when someone opens a pull request that modifies code that they own as defined in [`.github/CODEOWNERS`](.github/CODEOWNERS)
+You can install the AI21 API Client using npm or yarn:
 
-  - The first thing you should do, is **set a [team](https://github.com/AI21/template/blob/main/.github/CODEOWNERS) as a code owner for the `.github/settings.yml`**.
-
-- [ProBot Settings](https://github.com/probot/settings) — Synchronize repository settings defined in [`.github/settings.yml`](.github/settings.yml) to GitHub, enabling Pull Requests for repository settings
-
-  When adding/removing/modifying jobs within workflows, you might need to tweak the *required status checks* in this file; the required status checks must pass before you can merge your branch into the protected branch.
-
-- [ProBot Stale](https://github.com/probot/stale/) — Closes abandoned Issues and Pull Requests after a period of inactivity as defined in [`.github/stale.yml`](.github/stale.yml)
-- [DependaBot](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/about-dependabot-version-updates) — Alerts on security vulnerabilities within the repository's dependencies, and updates the dependencies automatically as defined in [`.github/dependabot.yml`](.github/dependabot.yml)
-- [RenovateBot](https://github.com/renovatebot/renovate) — Universal dependency update tool as defined in [`.github/renovate.json`](.github/renovate.json) ([application dashboard](https://app.renovatebot.com))
-- [Pre-commit](https://pre-commit.com/) — Managing and maintaining multi-language pre-commit hooks as defined in [`.pre-commit-config.yaml`](.pre-commit-config.yaml)
-
-  - Leverage `pre-commit` to [install the Git hooks](https://pre-commit.com/#pre-commit-install)
-
-    ```shell
-    pre-commit install --install-hooks -t pre-commit -t commit-msg
-    ```
-
-  - You can check which files `pre-commit` works on by running
-
-    ```shell
-    pre-commit run list-files --hook-stage manual --verbose
-    ```
-
-- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) — An easy set of rules for creating an explicit commit history; which makes it easier to write automated tools on top of. Such as generating a [changelog](https://keepachangelog.com/)
-
-  ```shell
-  git cz changelog
-  ```
-
----
-
-## Automation Features
-
-We **strongly recommend** to enable the following features manually
-
-### Code review assignment
-
-[Code review assignments clearly indicate which members of a team are expected to submit a review for a pull request](https://docs.github.com/en/organizations/organizing-members-into-teams/managing-code-review-assignment-for-your-team).
-
-### Scheduled reminders
-
-You can get reminders in Slack when your [team has pull requests waiting for review](https://docs.github.com/en/organizations/organizing-members-into-teams/managing-scheduled-reminders-for-your-team#creating-a-scheduled-reminder-for-a-team) or for [your user with real-time alerts](https://docs.github.com/en/github/setting-up-and-managing-your-github-user-account/managing-your-membership-in-organizations/managing-your-scheduled-reminders).
-
-## Prerequisites
-
-We are using a collection of tools. In order to work with this repository please [configure your Mac](https://github.com/AI21/dev-envs#getting-started)
-
-## Quick Start
-
-Run [`./bootstrap.sh`](./bootstrap.sh) and follow the interactive on-screen instructions. For more information, Run `./bootstrap.sh --help`.
-
-This will install pre-commit hooks, modify relevant files, deletes itself and open a draft pull-request.
-
-## Syncing with the Template repository
-
-To keep your repository up-to-date with the template git repository, execute the following from within your repository's root directory
-
-```shell
-git clone git@github.com:AI21/template.git ../template
-git checkout -b template-sync
-rsync -ax --exclude .git --exclude README.md --exclude CHANGELOG.md --exclude bootstrap.sh ../template/ .
+```bash
+npm install ai21
 ```
 
-Then do cherry-picking for the changes which you would like to merge.
+or
 
----
+```bash
+yarn add ai21
+```
 
-## Modify this README to suit the project
+## Usage
+
+To use the AI21 API Client, you'll need to have an API key. You can obtain an API key by signing up for an account on the AI21 website.
+
+Here's an example of how to use the `AI21` class to interact with the API:
+
+```typescript
+import { AI21 } from 'ai21';
+
+const client = new AI21({
+  apiKey: process.env.AI21_API_KEY, // or pass it in directly
+});
+
+const response = await client.chat.completions.create({
+  model: 'jamba-1.5-mini',
+  messages: [{ role: 'user', content: 'Hello, how are you? tell me a 100 line story about a cat named "Fluffy"' }],
+});
+
+console.log(response.data);
+```
+
+### Streaming Responses
+
+The client supports streaming responses for real-time processing. Here are examples using different approaches:
+
+#### Using Async Iterator
+
+```typescript
+const stream = await ai21.chat.completions.create({
+  model: 'jamba-1.5-mini',
+  messages: [{ role: 'user', content: 'Write a story about a space cat' }],
+  stream: true,
+});
+
+for await (const chunk of stream) {
+  console.log(chunk.choices[0]?.delta?.content || '');
+}
+```
+
+The `AI21` class provides a `chat` property that gives you access to the Chat API. You can use this to generate text, complete prompts, and more.
+
+## Configuration
+
+The `AI21` class accepts several configuration options, which you can pass in when creating a new instance:
+
+- `baseURL`: The base URL for the API endpoint (default: `https://api.ai21.com/studio/v1`)
+- `apiKey`: Your AI21 API key
+- `maxRetries`: The maximum number of retries for failed requests (default: `3`)
+- `timeout`: The request timeout in seconds
+
+## API Reference
+
+For detailed information about the available methods and their parameters, please refer to the [API reference documentation](https://docs.ai21.com/docs).
+
+## Contributing
+
+If you encounter any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/ai21-labs/api-client).
+
+## License
+
+This library is licensed under the [MIT License](LICENSE).
