@@ -25,20 +25,7 @@ const validatePositiveInteger = (name: string, n: unknown): number => {
   return n;
 };
 
-type ClientOptions = {
-  apiKey?: string;
-  organization?: string | null;
-  project?: string | null;
-  baseURL?: string;
-  maxRetries?: number;
-  timeout?: number;
-  defaultQuery?: DefaultQuery;
-  defaultHeaders?: Headers;
-  dangerouslyAllowBrowser?: boolean;
-};
-
 export abstract class APIClient {
-  protected options: ClientOptions;
   protected baseURL: string;
   protected maxRetries: number;
   protected timeout: number;
@@ -47,18 +34,14 @@ export abstract class APIClient {
     baseURL,
     maxRetries = AI21EnvConfig.MAX_RETRIES,
     timeout = AI21EnvConfig.TIMEOUT_SECONDS,
-    options,
   }: {
     baseURL: string;
     maxRetries?: number | undefined;
     timeout: number | undefined;
-    options: ClientOptions;
   }) {
     this.baseURL = baseURL;
     this.maxRetries = validatePositiveInteger('maxRetries', maxRetries);
     this.timeout = validatePositiveInteger('timeout', timeout);
-
-    this.options = options;
   }
   get<Req, Rsp>(path: string, opts?: PromiseOrValue<RequestOptions<Req>>): Promise<Rsp> {
     return this.makeRequest('get', path, opts);
@@ -98,9 +81,7 @@ export abstract class APIClient {
     return {};
   }
 
-  protected defaultQuery(): DefaultQuery | undefined {
-    return this.options.defaultQuery;
-  }
+  protected abstract defaultQuery(): DefaultQuery | undefined;
 
   private makeRequest<Req, Rsp>(
     method: HTTPMethod,

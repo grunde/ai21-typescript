@@ -3,38 +3,45 @@ import { AI21EnvConfig } from './EnvConfig';
 import { MissingAPIKeyError } from './errors';
 import { Chat } from './resources/chat';
 import { APIClient } from './APIClient';
+import { DefaultQuery, Headers } from './types';
 
-export interface AI21Options {
-  apiKey: string;
-  baseURL: string;
-  via: string | null;
-  timeout: number;
-  maxRetries: number;
-}
+export type ClientOptions = {
+  baseURL?: string;
+  apiKey?: string;
+  maxRetries?: number;
+  timeout?: number;
+  via?: string | null;
+  defaultQuery?: DefaultQuery;
+  defaultHeaders?: Headers;
+  dangerouslyAllowBrowser?: boolean;
+};
+
 export class AI21 extends APIClient {
+  protected options: ClientOptions;
   private apiKey: string;
-  private _options: AI21Options;
+  private via: string | null;
 
-  constructor(
-    apiKey: string = AI21EnvConfig.API_KEY,
-    baseURL: string = AI21EnvConfig.BASE_URL,
-    timeout: number = AI21EnvConfig.TIMEOUT_SECONDS,
-    maxRetries: number = AI21EnvConfig.MAX_RETRIES,
-    via: string | null = null,
-  ) {
-    const options: AI21Options = {
+  constructor({
+    apiKey = AI21EnvConfig.API_KEY,
+    baseURL = AI21EnvConfig.BASE_URL,
+    timeout = AI21EnvConfig.TIMEOUT_SECONDS,
+    maxRetries,
+    via,
+    ...opts
+  }: ClientOptions) {
+    const options: ClientOptions = {
       apiKey,
       baseURL,
-      via,
       timeout,
       maxRetries,
+      via,
+      ...opts,
     };
 
     super({
       baseURL,
       timeout,
       maxRetries,
-      options: {},
     });
 
     if (!apiKey) {
@@ -42,7 +49,8 @@ export class AI21 extends APIClient {
     }
 
     this.apiKey = apiKey;
-    this._options = options;
+    this.via = via ?? null;
+    this.options = options;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,11 +67,15 @@ export class AI21 extends APIClient {
     };
   }
 
+  protected defaultQuery(): DefaultQuery | undefined {
+    return this.options.defaultQuery;
+  }
+
   protected override getUserAgent(): string {
     let userAgent = super.getUserAgent();
 
-    if (this._options.via) {
-      userAgent += ` via ${this._options.via}`;
+    if (this.via) {
+      userAgent += ` via ${this.via}`;
     }
     return userAgent;
   }

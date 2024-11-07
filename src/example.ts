@@ -4,7 +4,7 @@ import { AI21 } from './ai21';
   This is a temporary example to test the API streaming/non-streaming functionality.
 */
 async function main() {
-  const client = new AI21('L40MQGXxfbtQVnCRqNTTKaojD8Snt7nQ');
+  const client = new AI21({ apiKey: process.env.AI21_API_KEY });
 
   try {
     const response = await client.chat.completions.create({
