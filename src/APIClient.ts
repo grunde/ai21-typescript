@@ -3,13 +3,7 @@ import { VERSION } from './version';
 
 import fetch from 'node-fetch';
 import { HeadersInit, RequestInit } from 'node-fetch';
-import {
-  RequestOptions,
-  FinalRequestOptions,
-  APIResponseProps,
-  HTTPMethod,
-  Headers,
-} from './types/index.js';
+import { RequestOptions, FinalRequestOptions, APIResponseProps, HTTPMethod, Headers } from './types/index.js';
 import { AI21EnvConfig } from './EnvConfig';
 import { handleAPIResponse } from './ResponseHandler';
 
