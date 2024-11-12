@@ -44,7 +44,7 @@ export class AI21 extends APIClient {
       maxRetries,
     });
 
-    if (!apiKey) {
+    if (apiKey === undefined) {
       throw new MissingAPIKeyError();
     }
 
