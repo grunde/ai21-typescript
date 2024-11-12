@@ -1,5 +1,4 @@
 import { AI21 } from './AI21';
-
 /*
   This is a temporary example to test the API streaming/non-streaming functionality.
 */
