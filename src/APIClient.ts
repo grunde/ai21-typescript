@@ -41,19 +41,19 @@ export abstract class APIClient {
     this.maxRetries = validatePositiveInteger('maxRetries', maxRetries);
     this.timeout = validatePositiveInteger('timeout', timeout);
   }
-  protected get<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  get<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('get', path, opts);
   }
 
-  protected post<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  post<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('post', path, opts);
   }
 
-  protected put<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  put<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('put', path, opts);
   }
 
-  protected delete<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  delete<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('delete', path, opts);
   }
 
