@@ -13,15 +13,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.2.0
+
+      - name: Use Node.js 20.18.0
+        uses: actions/setup-node@v4
         with:
-          fetch-depth: 0
-      - name: Pre-commit
-        uses: pre-commit/action@v3.0.0
-        with:
-          extra_args: --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
-          # - name: CODEOWNERS validator
-          #   uses: mszostok/codeowners-validator@v0.6.0
-          #   with:
-          #     checks: files,duppatterns,syntax,owners
-          #     experimental_checks: notowned
-          #     github_access_token: ${{ secrets.GH_PAT_RO }}
+          node-version: 20.18.0
+          cache: 'npm'
+    
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run quality checks
+        run: npm run quality
+
+      

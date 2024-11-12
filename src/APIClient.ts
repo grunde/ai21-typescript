@@ -3,16 +3,9 @@ import { VERSION } from './version';
 
 import fetch from 'node-fetch';
 import { HeadersInit, RequestInit } from 'node-fetch';
-import {
-  RequestOptions,
-  FinalRequestOptions,
-  APIResponseProps,
-  HTTPMethod,
-  DefaultQuery,
-  Headers,
-} from './types/index.js';
-import { AI21EnvConfig } from './EnvConfig.js';
-import { handleAPIResponse } from './ResponseHandler.js';
+import { RequestOptions, FinalRequestOptions, APIResponseProps, HTTPMethod, Headers } from './types/index.js';
+import { AI21EnvConfig } from './EnvConfig';
+import { handleAPIResponse } from './ResponseHandler';
 
 const validatePositiveInteger = (name: string, n: unknown): number => {
   if (typeof n !== 'number' || !Number.isInteger(n)) {
@@ -79,8 +72,6 @@ export abstract class APIClient {
   protected authHeaders(opts: FinalRequestOptions): Headers {
     return {};
   }
-
-  protected abstract defaultQuery(): DefaultQuery | undefined;
 
   private makeRequest<Req, Rsp>(method: HTTPMethod, path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     const options = {

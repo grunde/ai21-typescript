@@ -123,3 +123,4 @@ dist/
 node_modules/
 .cursorrules
 .vscode/
+coverage/
