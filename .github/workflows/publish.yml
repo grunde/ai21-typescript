@@ -1,0 +1,36 @@
+name: Release and Publish
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed for semantic release to create releases
+      issues: write # needed for semantic release to comment on issues
+      pull-requests: write # needed for semantic release to comment on PRs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install semantic-release
+        run: |
+          npm install --save-dev semantic-release @semantic-release/git @semantic-release/github
+        
+      - name: Build package
+        run: npm run build
+
+      - name: Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT_SEM_REL_NPM_ASAFG }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+        run: npx semantic-release
