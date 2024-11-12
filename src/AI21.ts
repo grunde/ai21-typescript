@@ -3,7 +3,7 @@ import { AI21EnvConfig } from './EnvConfig';
 import { MissingAPIKeyError } from './errors';
 import { Chat } from './resources/chat';
 import { APIClient } from './APIClient';
-import { DefaultQuery, Headers } from './types';
+import { Headers } from './types';
 
 export type ClientOptions = {
   baseURL?: string;
@@ -11,7 +11,6 @@ export type ClientOptions = {
   maxRetries?: number;
   timeout?: number;
   via?: string | null;
-  defaultQuery?: DefaultQuery;
   defaultHeaders?: Headers;
   dangerouslyAllowBrowser?: boolean;
 };
@@ -53,6 +52,9 @@ export class AI21 extends APIClient {
     this.options = options;
   }
 
+  // Resources
+  chat: Chat = new Chat(this);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected override authHeaders(_: Types.FinalRequestOptions): Types.Headers {
     return {
@@ -67,10 +69,6 @@ export class AI21 extends APIClient {
     };
   }
 
-  protected defaultQuery(): DefaultQuery | undefined {
-    return this.options.defaultQuery;
-  }
-
   protected override getUserAgent(): string {
     let userAgent = super.getUserAgent();
 
@@ -79,6 +77,4 @@ export class AI21 extends APIClient {
     }
     return userAgent;
   }
-
-  chat: Chat = new Chat(this);
 }

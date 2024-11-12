@@ -64,20 +64,4 @@ describe('AI21', () => {
       expect(headers['User-Agent']).toContain('via custom-app');
     });
   });
-
-  describe('defaultQuery', () => {
-    it('should return undefined when no default query is set', () => {
-      const client = new AI21(defaultOptions);
-      expect(client['defaultQuery']()).toBeUndefined();
-    });
-
-    it('should return default query when set', () => {
-      const defaultQuery = { version: '1.0' };
-      const client = new AI21({
-        ...defaultOptions,
-        defaultQuery,
-      });
-      expect(client['defaultQuery']()).toEqual(defaultQuery);
-    });
-  });
 }); 

@@ -8,7 +8,6 @@ import {
   FinalRequestOptions,
   APIResponseProps,
   HTTPMethod,
-  DefaultQuery,
   Headers,
 } from './types/index.js';
 import { AI21EnvConfig } from './EnvConfig';
@@ -42,19 +41,19 @@ export abstract class APIClient {
     this.maxRetries = validatePositiveInteger('maxRetries', maxRetries);
     this.timeout = validatePositiveInteger('timeout', timeout);
   }
-  get<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  protected get<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('get', path, opts);
   }
 
-  post<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  protected post<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('post', path, opts);
   }
 
-  put<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  protected put<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('put', path, opts);
   }
 
-  delete<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  protected delete<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('delete', path, opts);
   }
 
@@ -79,8 +78,6 @@ export abstract class APIClient {
   protected authHeaders(opts: FinalRequestOptions): Headers {
     return {};
   }
-
-  protected abstract defaultQuery(): DefaultQuery | undefined;
 
   private makeRequest<Req, Rsp>(method: HTTPMethod, path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     const options = {

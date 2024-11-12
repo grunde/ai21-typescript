@@ -6,7 +6,6 @@ import { AI21Error } from '../../../src/errors';
 
 class MockAPIClient extends APIClient {
     public post = jest.fn();
-    public defaultQuery = () => ({});
   }
   
 
