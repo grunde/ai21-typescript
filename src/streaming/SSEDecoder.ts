@@ -81,11 +81,29 @@ export class NodeSSEDecoder extends BaseSSEDecoder {
 
       // Fallback for older Node.js versions or environments without stream/web
       console.log('Falling back to old stream API');
-      const stream = response.body as ReadableStream<Uint8Array>;
-      if (!stream) {
+      let buffer = '';
+      if (!response.body) {
         throw new Error('Response body is null');
       }
-      yield* this._iterLines(stream.getReader());
+      for await (const chunk of response.body as NodeJS.ReadableStream) {
+        const text = typeof chunk === 'string' ? chunk : chunk.toString('utf-8');
+        buffer += text;
+        
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmedLine = line.trim();
+          const decoded = this.decode(trimmedLine);
+          if (decoded) yield decoded;
+        }
+      }
+
+      // Handle any remaining data in the buffer
+      if (buffer.length > 0) {
+        const decoded = this.decode(buffer.trim());
+        if (decoded) yield decoded;
+      }
     } catch (error) {
       console.error('Error:', error);
       throw error;
