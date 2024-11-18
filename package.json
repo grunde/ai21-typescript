@@ -22,8 +22,7 @@
     "prepare": "npm run build",
     "circular": "madge --circular --extensions ts src",
     "quality": "npm run circular && npm run lint && tsc --noEmit && npm run format && npm run unused-deps",
-    "quality:fix": "npm run circular && npm run lint -- --fix && tsc --noEmit && npm run format",
-    "postinstall": "husky install"
+    "quality:fix": "npm run circular && npm run lint -- --fix && tsc --noEmit && npm run format"
   },
   "files": [
     "dist"
