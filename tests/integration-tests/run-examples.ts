@@ -65,24 +65,40 @@ async function runAllExamples(): Promise<void> {
 
     const results = await Promise.all(files.map(runExample));
     
-    // Print results
+    // Print results summary
     const successful = results.filter(r => r.success);
     const failed = results.filter(r => !r.success);
 
-    console.log(chalk.green(`\n✓ ${successful.length} examples passed`));
+    console.log('\n=== Test Results Summary ===');
+    console.log(chalk.green(`✓ ${successful.length} examples passed:`));
+    successful.forEach(result => {
+      const fileName = result.file.split('/').pop() || result.file;
+      console.log(chalk.green(`  ✓ ${fileName}`));
+    });
     
+    if (failed.length > 0) {
+      console.log(chalk.red(`\n✗ ${failed.length} examples failed:`));
+      failed.forEach(result => {
+        const fileName = result.file.split('/').pop() || result.file;
+        console.log(chalk.red(`  ✗ ${fileName}`));
+      });
+    }
+
+    // Detailed output section
     if (successful.length > 0) {
-      console.log('\nSuccessful examples output:');
+      console.log('\n=== Successful Examples Output ===');
       successful.forEach(result => {
-        console.log(chalk.green(`\n${result.file}:`));
+        const fileName = result.file.split('/').pop() || result.file;
+        console.log(chalk.green(`\n[${fileName}]:`));
         console.log(chalk.gray(result.output));
       });
     }
     
     if (failed.length > 0) {
-      console.log(chalk.red(`\n✗ ${failed.length} examples failed:`));
+      console.log('\n=== Failed Examples Details ===');
       failed.forEach(result => {
-        console.log(chalk.red(`\n${result.file}:`));
+        const fileName = result.file.split('/').pop() || result.file;
+        console.log(chalk.red(`\n[${fileName}]:`));
         console.log(chalk.gray(result.error));
         if (result.output) {
           console.log('\nOutput:');
