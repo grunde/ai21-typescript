@@ -85,10 +85,12 @@ export class NodeSSEDecoder extends BaseSSEDecoder {
       if (!response.body) {
         throw new Error('Response body is null');
       }
+
+      console.log('Starting stream', response.body);
       for await (const chunk of response.body as NodeJS.ReadableStream) {
         const text = typeof chunk === 'string' ? chunk : chunk.toString('utf-8');
         buffer += text;
-        
+
         const lines = buffer.split('\n');
         buffer = lines.pop() || '';
 
