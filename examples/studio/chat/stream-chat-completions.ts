@@ -9,12 +9,40 @@ async function main() {
       messages: [{ role: 'user', content: 'Hello, how are you? tell me a 100 line story about a cat' }],
       stream: true,
     });
+
+    console.log('Stream response type:', typeof streamResponse);
+    console.log('Stream response structure:', JSON.stringify(streamResponse, null, 2));
+
+    if (!streamResponse) {
+      throw new Error('No response received from API');
+    }
+
     for await (const chunk of streamResponse) {
-      process.stdout.write(chunk.choices[0]?.delta?.content || '');
+      if (chunk?.choices?.[0]?.delta?.content) {
+        process.stdout.write(chunk.choices[0].delta.content);
+      }
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    });
+    
+    throw error;
   }
 }
 
-main().catch(console.error);
+const timeout = setTimeout(() => {
+  console.error('Script timed out after 30 seconds');
+  process.exit(1);
+}, 30000);
+
+main()
+  .catch((error) => {
+    console.error('Fatal error:', error);
+    process.exit(1);
+  })
+  .finally(() => {
+    clearTimeout(timeout);
+  });
