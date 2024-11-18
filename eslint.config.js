@@ -13,6 +13,14 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/strict-boolean-expressions': 'off', // Often works incorrectly
       '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        {
+          allowShortCircuit: true,
+          allowTernary: true,
+          allowTaggedTemplates: true,
+        },
+      ],
     },
   },
   pluginJs.configs.recommended,
