@@ -66,9 +66,31 @@ export class BrowserSSEDecoder extends BaseSSEDecoder {
 export class NodeSSEDecoder extends BaseSSEDecoder {
   async *iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string> {
     console.log('NodeSSEDecoder iterLines', response);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const readerStream = (await import('stream/web')).ReadableStream as any;
-    const reader = readerStream.from(response.body).getReader();
-    yield* this._iterLines(reader);
+
+    // const readerStream = (await import('stream/web')).ReadableStream as any;
+
+    try {
+      // Try the newer stream/web API first
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const webStream = (await import('stream/web').catch(() => null)) as any;
+      if (webStream?.ReadableStream) {
+        const reader = webStream.ReadableStream.from(response.body).getReader();
+        yield* this._iterLines(reader);
+        return;
+      }
+
+      // Fallback for older Node.js versions or environments without stream/web
+      console.log('Falling back to old stream API');
+      const stream = response.body as ReadableStream<Uint8Array>;
+      if (!stream) {
+        throw new Error('Response body is null');
+      }
+      yield* this._iterLines(stream.getReader());
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
+
+    // const reader = readerStream.from(response.body).getReader();
   }
 }
