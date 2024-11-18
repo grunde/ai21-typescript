@@ -1,6 +1,6 @@
-import { AI21, ClientOptions } from '../src/AI21';
-import { AI21Error, MissingAPIKeyError } from '../src/errors';
-import { Chat } from '../src/resources/chat';
+import { AI21, ClientOptions } from '../../src/AI21';
+import { AI21Error, MissingAPIKeyError } from '../../src/errors';
+import { Chat } from '../../src/resources/chat';
 
 describe('AI21', () => {
   const mockApiKey = 'test-api-key';

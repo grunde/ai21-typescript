@@ -1,7 +1,7 @@
-import * as Models from '../../../src/types';
-import {Completions} from "../../../src/resources/chat/completions";
-import { APIClient } from '../../../src/APIClient';
-import { AI21Error } from '../../../src/errors';
+import * as Models from '../../../../src/types';
+import {Completions} from "../../../../src/resources/chat/completions";
+import { APIClient } from '../../../../src/APIClient';
+import { AI21Error } from '../../../../src/errors';
 
 
 class MockAPIClient extends APIClient {
