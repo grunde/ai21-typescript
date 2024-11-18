@@ -8,8 +8,8 @@ import * as Runtime from './runtime';
 import { ConversationalRag } from './resources/rag/conversationalRag';
 
 export interface ClientOptions {
-  baseURL?: string;
-  apiKey?: string;
+  baseURL?: string | undefined;
+  apiKey?: string | undefined;
   maxRetries?: number;
   timeout?: number;
   via?: string | null;
