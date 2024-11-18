@@ -56,6 +56,8 @@ export class BrowserSSEDecoder extends BaseSSEDecoder {
       throw new Error('Response body is null');
     }
 
+    console.log('BrowserSSEDecoder iterLines', response);
+
     const body = response.body as ReadableStream<Uint8Array>;
     yield* this._iterLines(body.getReader());
   }
@@ -63,6 +65,7 @@ export class BrowserSSEDecoder extends BaseSSEDecoder {
 
 export class NodeSSEDecoder extends BaseSSEDecoder {
   async *iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string> {
+    console.log('NodeSSEDecoder iterLines', response);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const readerStream = (await import('stream/web')).ReadableStream as any;
     const reader = readerStream.from(response.body).getReader();
