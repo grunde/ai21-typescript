@@ -12,7 +12,7 @@ async function main() {
 
     for await (const chunk of streamResponse) {
       if (chunk?.choices?.[0]?.delta?.content) {
-        console.log(chunk.choices[0].delta.content);
+        process.stdout.write(chunk.choices[0].delta.content);
       }
     }
   } catch (error) {
