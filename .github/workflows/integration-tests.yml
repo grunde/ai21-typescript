@@ -1,0 +1,29 @@
+name: Integration Tests
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [23.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm install ai21
+      
+    - name: Run Integration Tests
+      env:
+        AI21_API_KEY: ${{ secrets.AI21_API_KEY }}
+      run: npm run integration-test
+  

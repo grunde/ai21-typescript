@@ -16,6 +16,7 @@
   "scripts": {
     "build": "vite build",
     "test": "jest --coverage --no-cache --runInBand --config jest.config.ts",
+    "integration-test": "npx tsx tests/integration-tests/run-examples.ts",
     "unused-deps": "npx depcheck --json | jq '.dependencies == []'",
     "clean-build": "rm -rf ./dist",
     "lint": "npx eslint '{src,examples}/**/*.{ts,tsx}' --no-ignore",

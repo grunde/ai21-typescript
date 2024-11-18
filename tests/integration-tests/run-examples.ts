@@ -28,12 +28,10 @@ async function findExampleFiles(dir: string): Promise<string[]> {
 
 async function runExample(file: string): Promise<TestResult> {
   try {
-    console.log("API KEY", process.env.AI21_API_KEY);
     const { stdout, stderr } = await execAsync(`tsx "${file}"`, {
       env: {
         ...process.env,
         NODE_ENV: 'test',
-        AI21_API_KEY: process.env.AI21_API_KEY || '',
       }
     });
 
