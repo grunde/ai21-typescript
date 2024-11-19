@@ -20,11 +20,24 @@ abstract class BaseSSEDecoder implements SSEDecoder {
 
   abstract iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string>;
 
-  protected processLine(line: string): string {
-    if (line.startsWith('data: ')) {
-      return line.slice(6);
+  protected async *_iterLines(lines: string[]): AsyncIterableIterator<string> {
+    for (const line of lines) {
+      if (line.trim()) {
+        const decoded = this.decode(line);
+        if (decoded) {
+          yield decoded;
+        }
+      }
     }
-    return line;
+  }
+
+  protected async *readBuffer(buffer: string): AsyncIterableIterator<string> {
+    if (buffer.trim()) {
+      const decoded = this.decode(buffer);
+      if (decoded) {
+        yield decoded;
+      }
+    }
   }
 }
 
@@ -47,16 +60,10 @@ export class BrowserSSEDecoder extends BaseSSEDecoder {
         const lines = buffer.split(/\r\n|\n/);
         buffer = lines.pop() || '';
 
-        for (const line of lines) {
-          if (line.trim()) {
-            yield this.processLine(line);
-          }
-        }
+        yield* this._iterLines(lines);
       }
 
-      if (buffer.trim()) {
-        yield this.processLine(buffer);
-      }
+      yield* this.readBuffer(buffer);
     } finally {
       reader.releaseLock();
     }
@@ -78,15 +85,9 @@ export class NodeSSEDecoder extends BaseSSEDecoder {
       const lines = buffer.split(/\r\n|\n/);
       buffer = lines.pop() || '';
 
-      for (const line of lines) {
-        if (line.trim()) {
-          yield this.processLine(line);
-        }
-      }
+      yield* this._iterLines(lines);
     }
 
-    if (buffer.trim()) {
-      yield this.processLine(buffer);
-    }
+    yield* this.readBuffer(buffer);
   }
 }
