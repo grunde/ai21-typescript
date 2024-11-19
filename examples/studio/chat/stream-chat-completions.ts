@@ -15,6 +15,11 @@ async function main() {
         process.stdout.write(chunk.choices[0].delta.content);
       }
     }
+
+    process.stdout.write('\n');
+    
+    // Explicitly exit after stream completion
+    process.exit(0);
   } catch (error) {
     console.error('Error:', error);
     throw error;

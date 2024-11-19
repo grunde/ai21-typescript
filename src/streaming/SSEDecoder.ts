@@ -18,7 +18,15 @@ abstract class BaseSSEDecoder implements SSEDecoder {
     throw new StreamingDecodeError(`Invalid SSE line: ${line}`);
   }
 
-  abstract iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string>;
+  protected abstract getReader(response: CrossPlatformResponse): ReadableStreamDefaultReader<Uint8Array>;
+
+  async *iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string> {
+    if (!response.body) {
+      throw new Error('Response body is null');
+    }
+    
+    yield* this._iterLines(this.getReader(response));
+  }
 
   async *_iterLines(reader: ReadableStreamDefaultReader<Uint8Array>): AsyncIterableIterator<string> {
     let buffer = '';
@@ -51,66 +59,33 @@ abstract class BaseSSEDecoder implements SSEDecoder {
 }
 
 export class BrowserSSEDecoder extends BaseSSEDecoder {
-  async *iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string> {
-    if (!response.body) {
-      throw new Error('Response body is null');
-    }
-
-    console.log('BrowserSSEDecoder iterLines', response);
-
+  protected getReader(response: CrossPlatformResponse): ReadableStreamDefaultReader<Uint8Array> {
     const body = response.body as ReadableStream<Uint8Array>;
-    yield* this._iterLines(body.getReader());
+    return body.getReader();
   }
 }
 
 export class NodeSSEDecoder extends BaseSSEDecoder {
-  async *iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string> {
-    console.log('NodeSSEDecoder iterLines', response);
-
-    // const readerStream = (await import('stream/web')).ReadableStream as any;
-
-    try {
-      // Try the newer stream/web API first
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const webStream = (await import('stream/web').catch(() => null)) as any;
-      if (webStream?.ReadableStream) {
-        const reader = webStream.ReadableStream.from(response.body).getReader();
-        yield* this._iterLines(reader);
-        return;
-      }
-
-      // Fallback for older Node.js versions or environments without stream/web
-      console.log('Falling back to old stream API');
-      let buffer = '';
-      if (!response.body) {
-        throw new Error('Response body is null');
-      }
-
-      console.log('Starting stream', response.body);
-      for await (const chunk of response.body as NodeJS.ReadableStream) {
-        const text = typeof chunk === 'string' ? chunk : chunk.toString('utf-8');
-        buffer += text;
-
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          const trimmedLine = line.trim();
-          const decoded = this.decode(trimmedLine);
-          if (decoded) yield decoded;
+  protected getReader(response: CrossPlatformResponse): ReadableStreamDefaultReader<Uint8Array> {
+    const stream = response.body as NodeJS.ReadableStream;
+    // Convert Node readable stream to Web readable stream
+    const webStream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of stream) {
+            const uint8Array = typeof chunk === 'string' 
+              ? new TextEncoder().encode(chunk)
+              : chunk instanceof Uint8Array 
+                ? chunk 
+                : new Uint8Array(chunk);
+            controller.enqueue(uint8Array);
+          }
+          controller.close();
+        } catch (error) {
+          controller.error(error);
         }
       }
-
-      // Handle any remaining data in the buffer
-      if (buffer.length > 0) {
-        const decoded = this.decode(buffer.trim());
-        if (decoded) yield decoded;
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      throw error;
-    }
-
-    // const reader = readerStream.from(response.body).getReader();
+    });
+    return webStream.getReader();
   }
 }
