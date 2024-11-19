@@ -17,7 +17,7 @@ async function main() {
     }
 
     process.stdout.write('\n');
-    
+
     // Explicitly exit after stream completion
     process.exit(0);
   } catch (error) {

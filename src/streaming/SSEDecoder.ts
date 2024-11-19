@@ -24,7 +24,7 @@ abstract class BaseSSEDecoder implements SSEDecoder {
     if (!response.body) {
       throw new Error('Response body is null');
     }
-    
+
     yield* this._iterLines(this.getReader(response));
   }
 
@@ -73,18 +73,17 @@ export class NodeSSEDecoder extends BaseSSEDecoder {
       async start(controller) {
         try {
           for await (const chunk of stream) {
-            const uint8Array = typeof chunk === 'string' 
-              ? new TextEncoder().encode(chunk)
-              : chunk instanceof Uint8Array 
-                ? chunk 
-                : new Uint8Array(chunk);
+            const uint8Array =
+              typeof chunk === 'string' ? new TextEncoder().encode(chunk)
+              : chunk instanceof Uint8Array ? chunk
+              : new Uint8Array(chunk);
             controller.enqueue(uint8Array);
           }
           controller.close();
         } catch (error) {
           controller.error(error);
         }
-      }
+      },
     });
     return webStream.getReader();
   }
