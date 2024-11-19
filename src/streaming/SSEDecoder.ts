@@ -18,39 +18,44 @@ abstract class BaseSSEDecoder implements SSEDecoder {
     throw new StreamingDecodeError(`Invalid SSE line: ${line}`);
   }
 
-  protected abstract getReader(response: CrossPlatformResponse): ReadableStreamDefaultReader<Uint8Array>;
+  abstract iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string>;
 
+  protected processLine(line: string): string {
+    if (line.startsWith('data: ')) {
+      return line.slice(6);
+    }
+    return line;
+  }
+}
+
+export class BrowserSSEDecoder extends BaseSSEDecoder {
   async *iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string> {
     if (!response.body) {
       throw new Error('Response body is null');
     }
 
-    yield* this._iterLines(this.getReader(response));
-  }
-
-  async *_iterLines(reader: ReadableStreamDefaultReader<Uint8Array>): AsyncIterableIterator<string> {
+    const reader = (response.body as ReadableStream<Uint8Array>).getReader();
+    const decoder = new TextDecoder();
     let buffer = '';
 
     try {
       while (true) {
         const { done, value } = await reader.read();
+        if (done) break;
 
-        if (done) {
-          if (buffer.length > 0) {
-            const decoded = this.decode(buffer.trim());
-            if (decoded) yield decoded;
-          }
-          break;
-        }
-
-        buffer += new TextDecoder().decode(value);
-        const lines = buffer.split('\n');
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split(/\r\n|\n/);
         buffer = lines.pop() || '';
 
         for (const line of lines) {
-          const decoded = this.decode(line.trim());
-          if (decoded) yield decoded;
+          if (line.trim()) {
+            yield this.processLine(line);
+          }
         }
+      }
+
+      if (buffer.trim()) {
+        yield this.processLine(buffer);
       }
     } finally {
       reader.releaseLock();
@@ -58,33 +63,30 @@ abstract class BaseSSEDecoder implements SSEDecoder {
   }
 }
 
-export class BrowserSSEDecoder extends BaseSSEDecoder {
-  protected getReader(response: CrossPlatformResponse): ReadableStreamDefaultReader<Uint8Array> {
-    const body = response.body as ReadableStream<Uint8Array>;
-    return body.getReader();
-  }
-}
-
 export class NodeSSEDecoder extends BaseSSEDecoder {
-  protected getReader(response: CrossPlatformResponse): ReadableStreamDefaultReader<Uint8Array> {
+  async *iterLines(response: CrossPlatformResponse): AsyncIterableIterator<string> {
+    if (!response.body) {
+      throw new Error('Response body is null');
+    }
+
     const stream = response.body as NodeJS.ReadableStream;
-    // Convert Node readable stream to Web readable stream
-    const webStream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of stream) {
-            const uint8Array =
-              typeof chunk === 'string' ? new TextEncoder().encode(chunk)
-              : chunk instanceof Uint8Array ? chunk
-              : new Uint8Array(chunk);
-            controller.enqueue(uint8Array);
-          }
-          controller.close();
-        } catch (error) {
-          controller.error(error);
+    let buffer = '';
+
+    for await (const chunk of stream) {
+      const text = typeof chunk === 'string' ? chunk : chunk.toString('utf-8');
+      buffer += text;
+      const lines = buffer.split(/\r\n|\n/);
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (line.trim()) {
+          yield this.processLine(line);
         }
-      },
-    });
-    return webStream.getReader();
+      }
+    }
+
+    if (buffer.trim()) {
+      yield this.processLine(buffer);
+    }
   }
 }
