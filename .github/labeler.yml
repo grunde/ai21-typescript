@@ -17,18 +17,23 @@ ci:
       - any-glob-to-any-file:
           - .github/*
 
+studio:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/AI21.ts
+
 aws:
   - changed-files:
       - any-glob-to-any-file:
-          - ai21/clients/bedrock/*
-          - ai21/clients/sagemaker/*
+          - src/AI21BedrockClient.ts
+          - src/AI21SagemakerClient.ts
 
 azure:
   - changed-files:
       - any-glob-to-any-file:
-          - ai21/clients/azure/*
+          - src/AI21AzureClient.ts
 
 vertex:
   - changed-files:
       - any-glob-to-any-file:
-          - ai21/clients/vertex/*
+          - src/AI21VertexClient.ts

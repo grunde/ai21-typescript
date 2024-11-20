@@ -6,14 +6,23 @@ async function main() {
   try {
     const streamResponse = await client.chat.completions.create({
       model: 'jamba-1.5-mini',
-      messages: [{ role: 'user', content: 'Hello, how are you? tell me a 100 line story about a cat' }],
+      messages: [{ role: 'user', content: 'Hello, how are you? tell me a short story' }],
       stream: true,
     });
+
     for await (const chunk of streamResponse) {
-      process.stdout.write(chunk.choices[0]?.delta?.content || '');
+      if (chunk?.choices?.[0]?.delta?.content) {
+        process.stdout.write(chunk.choices[0].delta.content);
+      }
     }
+
+    process.stdout.write('\n');
+
+    // Explicitly exit after stream completion
+    process.exit(0);
   } catch (error) {
     console.error('Error:', error);
+    throw error;
   }
 }
 

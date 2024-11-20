@@ -1,7 +1,6 @@
-import * as Models from '../../../src/types';
-import {ConversationalRag} from "../../../src/resources/rag/conversationalRag";
-import { APIClient } from '../../../src/APIClient';
-import { AI21Error } from '../../../src/errors';
+import * as Models from '../../../../src/types';
+import {ConversationalRag} from "../../../../src/resources/rag/conversationalRag";
+import { APIClient } from '../../../../src/APIClient';
 
 
 class MockAPIClient extends APIClient {
