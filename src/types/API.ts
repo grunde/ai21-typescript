@@ -10,7 +10,7 @@ export type RequestOptions<Req = unknown | Record<string, unknown> | ArrayBuffer
   method?: HTTPMethod;
   path?: string;
   query?: Req | undefined;
-  body?: Req | null | undefined;
+  body?: Req | FormData | null | undefined;
   headers?: Headers | undefined;
 
   maxRetries?: number;

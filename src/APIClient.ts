@@ -12,6 +12,9 @@ import {
 import { AI21EnvConfig } from './EnvConfig';
 import { createFetchInstance } from './runtime';
 import { Fetch } from 'fetch';
+import { createReadStream } from 'fs';
+import { basename as getBasename } from 'path';
+import FormData from 'form-data';
 
 const validatePositiveInteger = (name: string, n: unknown): number => {
   if (typeof n !== 'number' || !Number.isInteger(n)) {
@@ -61,6 +64,49 @@ export abstract class APIClient {
     return this.makeRequest('delete', path, opts);
   }
 
+  upload<Req, Rsp>(path: string, filePath: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+    const formDataRequest = this.makeFormDataRequest(path, filePath, opts);
+    return this.performRequest(formDataRequest).then(
+      (response) => this.fetch.handleResponse<Rsp>(response) as Rsp,
+    );
+  }
+
+  protected makeFormDataRequest<Req>(path: string, filePath: string, opts?: RequestOptions<Req>): FinalRequestOptions {
+    const formData = new FormData();
+    const fileStream = createReadStream(filePath);
+    const fileName = getBasename(filePath);
+
+    formData.append('file', fileStream, fileName);
+
+    if (opts?.body) {
+      const body = opts.body as Record<string, string>;
+      for (const [key, value] of Object.entries(body)) {
+        if (Array.isArray(value)) {
+          value.forEach(item => formData.append(key, item));
+        } else {
+          formData.append(key, value);
+        }
+      }
+    }
+
+    const headers = {
+      ...opts?.headers,
+      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`
+    };
+    console.log(headers);
+    console.log("-------------------------");
+    console.log(formData.getHeaders());
+    console.log("-------------------------");
+
+    const options: FinalRequestOptions = {
+      method: 'post',
+      path: path,
+      body: formData,
+      headers,
+    };
+    return options;
+  }
+
   protected getUserAgent(): string {
     const platform =
       this.isRunningInBrowser() ?
@@ -96,12 +142,18 @@ export abstract class APIClient {
   }
 
   private async performRequest(options: FinalRequestOptions): Promise<APIResponseProps> {
-    const url = `${this.baseURL}${options.path}`;
+    let url = `${this.baseURL}${options.path}`;
+
+    if (options.query) {
+      const queryString = new URLSearchParams(options.query as Record<string, string>).toString();
+      url += `?${queryString}`;
+    }
 
     const headers = {
       ...this.defaultHeaders(options),
       ...options.headers,
     };
+
     const response = await this.fetch.call(url, { ...options, headers });
 
     if (!response.ok) {
