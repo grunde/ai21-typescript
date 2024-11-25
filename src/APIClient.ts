@@ -71,11 +71,7 @@ export abstract class APIClient {
     );
   }
 
-  protected makeFormDataRequest<Req>(
-    path: string,
-    filePath: string,
-    opts?: RequestOptions<Req>,
-  ): FinalRequestOptions {
+  protected makeFormDataRequest<Req>(path: string, filePath: string, opts?: RequestOptions<Req>): FinalRequestOptions {
     const formData = new FormData();
     const fileStream = createReadStream(filePath);
     const fileName = getBasename(filePath);
@@ -83,10 +79,11 @@ export abstract class APIClient {
     formData.append('file', fileStream, fileName);
 
     if (opts?.body) {
-      const body = opts.body as Record<string, string>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const body = opts.body as Record<string, any>;
       for (const [key, value] of Object.entries(body)) {
         if (Array.isArray(value)) {
-          value.forEach((item) => formData.append(key, item));
+          value.forEach(item => formData.append(key, item));
         } else {
           formData.append(key, value);
         }
@@ -95,12 +92,12 @@ export abstract class APIClient {
 
     const headers = {
       ...opts?.headers,
-      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
+      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`
     };
     console.log(headers);
-    console.log('-------------------------');
+    console.log("-------------------------");
     console.log(formData.getHeaders());
-    console.log('-------------------------');
+    console.log("-------------------------");
 
     const options: FinalRequestOptions = {
       method: 'post',
