@@ -64,14 +64,17 @@ export abstract class APIClient {
     return this.makeRequest('delete', path, opts);
   }
 
-  upload<Req, Rsp>(path: string, filePath: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  async upload<Req, Rsp>(path: string, filePath: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     const formDataRequest = this.makeFormDataRequest(path, filePath, opts);
-    return this.performRequest(formDataRequest).then(
-      (response) => this.fetch.handleResponse<Rsp>(response) as Rsp,
-    );
+    const response = await this.performRequest(formDataRequest);
+    return this.fetch.handleResponse<Rsp>(response) as Rsp;
   }
 
-  protected makeFormDataRequest<Req>(path: string, filePath: string, opts?: RequestOptions<Req>): FinalRequestOptions {
+  protected makeFormDataRequest<Req>(
+    path: string,
+    filePath: string,
+    opts?: RequestOptions<Req>,
+  ): FinalRequestOptions {
     const formData = new FormData();
     const fileStream = createReadStream(filePath);
     const fileName = getBasename(filePath);
@@ -83,7 +86,7 @@ export abstract class APIClient {
       const body = opts.body as Record<string, any>;
       for (const [key, value] of Object.entries(body)) {
         if (Array.isArray(value)) {
-          value.forEach(item => formData.append(key, item));
+          value.forEach((item) => formData.append(key, item));
         } else {
           formData.append(key, value);
         }
@@ -92,12 +95,8 @@ export abstract class APIClient {
 
     const headers = {
       ...opts?.headers,
-      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`
+      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
     };
-    console.log(headers);
-    console.log("-------------------------");
-    console.log(formData.getHeaders());
-    console.log("-------------------------");
 
     const options: FinalRequestOptions = {
       method: 'post',
