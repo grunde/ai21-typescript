@@ -24,7 +24,7 @@ export class Completions extends APIResource {
       {
         body,
         ...options,
-          stream: body.stream ?? false,
+        stream: body.stream ?? false,
       } as Models.RequestOptions<Models.ChatCompletionCreateParams>,
     ) as Promise<Models.ChatCompletionResponse> | Promise<Stream<Models.ChatCompletionChunk>>;
   }

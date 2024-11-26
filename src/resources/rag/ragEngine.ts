@@ -6,7 +6,11 @@ import { FileResponse } from 'types/rag/FileResponse';
 const RAG_ENGINE_PATH = '/library/files';
 
 export class RAGEngine extends APIResource {
-  create(filePath: string, body: UploadFileRequest, options?: Models.RequestOptions): Promise<UploadFileResponse> {
+  create(
+    filePath: string,
+    body: UploadFileRequest,
+    options?: Models.RequestOptions,
+  ): Promise<UploadFileResponse> {
     return this.client.upload<UploadFileRequest, UploadFileResponse>(RAG_ENGINE_PATH, filePath, {
       body: body,
       ...options,

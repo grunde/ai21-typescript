@@ -30,16 +30,14 @@ const validatePositiveInteger = (name: string, n: unknown): number => {
 const appendBodyToFormData = (formData: FormData, body: Record<string, any>): void => {
   for (const [key, value] of Object.entries(body)) {
     if (Array.isArray(value)) {
-      value.forEach(item => formData.append(key, item));
+      value.forEach((item) => formData.append(key, item));
     } else {
       formData.append(key, value);
     }
   }
-}
+};
 
-export type FilePathOrFileObject =
-| string
-| File;
+export type FilePathOrFileObject = string | File;
 
 function makeFormDataFromFilePath(filePath: string): FormData {
   const formData = new FormData();
@@ -97,7 +95,6 @@ export abstract class APIClient {
   upload<Req, Rsp>(path: string, file: string, opts?: RequestOptions<Req>): Promise<Rsp>;
   upload<Req, Rsp>(path: string, file: File, opts?: RequestOptions<Req>): Promise<Rsp>;
 
-
   upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
     let formData: FormData;
 
@@ -113,10 +110,10 @@ export abstract class APIClient {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       appendBodyToFormData(formData, opts.body as Record<string, any>);
     }
-  
+
     const headers = {
       ...opts?.headers,
-      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`
+      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
     };
 
     const options: FinalRequestOptions = {
@@ -126,9 +123,7 @@ export abstract class APIClient {
       headers,
     };
 
-    return this.performRequest(options).then(
-      (response) => this.fetch.handleResponse<Rsp>(response) as Rsp,
-    );
+    return this.performRequest(options).then((response) => this.fetch.handleResponse<Rsp>(response) as Rsp);
   }
 
   protected makeFormDataRequest<Req>(
@@ -194,7 +189,7 @@ export abstract class APIClient {
     const options = {
       method,
       path,
-       
+
       ...opts,
     };
 
