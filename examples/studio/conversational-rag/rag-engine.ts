@@ -26,6 +26,14 @@ async function uploadQueryUpdateDelete() {
       { path: 'test10' },
     );
 
+    // const fileContent = Buffer.from('This is the content of the file.');
+    // const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
+
+    // // Use the File object in the create method
+    // const uploadFileResponse: UploadFileResponse = await client.ragEngine.create(dummyFile, {
+    //   path: 'test10',
+    // });
+
     const fileId = uploadFileResponse.fileId;
     let file: FileResponse = await waitForFileProcessing(client, fileId);
     console.log(file);

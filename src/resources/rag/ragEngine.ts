@@ -1,17 +1,29 @@
 import * as Models from '../../types';
 import { APIResource } from '../../APIResource';
-import { UploadFileResponse, UploadFileRequest, ListFilesFilters, UpdateFileRequest } from '../../types/rag';
+import { UploadFileResponse, UploadFileRequest, ListFilesFilters, UpdateFileRequest, FilePathOrFileObject } from '../../types/rag';
 import { FileResponse } from 'types/rag/FileResponse';
 
 const RAG_ENGINE_PATH = '/library/files';
 
 export class RAGEngine extends APIResource {
   create(
-    filePath: string,
+    file: string,
+    body: UploadFileRequest,
+    options?: Models.RequestOptions,
+  ): Promise<UploadFileResponse>;
+
+  create(
+    file: File,
+    body: UploadFileRequest,
+    options?: Models.RequestOptions,
+  ): Promise<UploadFileResponse>;
+
+  create(
+    file: FilePathOrFileObject,
     body: UploadFileRequest,
     options?: Models.RequestOptions,
   ): Promise<UploadFileResponse> {
-    return this.client.upload<UploadFileRequest, UploadFileResponse>(RAG_ENGINE_PATH, filePath, {
+    return this.client.upload<UploadFileRequest, UploadFileResponse>(RAG_ENGINE_PATH, file, {
       body: body,
       ...options,
     } as Models.RequestOptions<UploadFileRequest>) as Promise<UploadFileResponse>;

@@ -15,6 +15,7 @@ import { Fetch } from 'fetch';
 import { createReadStream } from 'fs';
 import { basename as getBasename } from 'path';
 import FormData from 'form-data';
+import { FilePathOrFileObject } from 'types/rag';
 
 const validatePositiveInteger = (name: string, n: unknown): number => {
   if (typeof n !== 'number' || !Number.isInteger(n)) {
@@ -37,7 +38,6 @@ const appendBodyToFormData = (formData: FormData, body: Record<string, any>): vo
   }
 };
 
-export type FilePathOrFileObject = string | File;
 
 function makeFormDataFromFilePath(filePath: string): FormData {
   const formData = new FormData();
@@ -91,9 +91,6 @@ export abstract class APIClient {
   delete<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('delete', path, opts);
   }
-
-  upload<Req, Rsp>(path: string, file: string, opts?: RequestOptions<Req>): Promise<Rsp>;
-  upload<Req, Rsp>(path: string, file: File, opts?: RequestOptions<Req>): Promise<Rsp>;
 
   upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
     let formData: FormData;

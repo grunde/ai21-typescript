@@ -6,7 +6,7 @@ import { APIClient } from './APIClient';
 import { Headers } from './types';
 import * as Runtime from './runtime';
 import { ConversationalRag } from './resources/rag/conversationalRag';
-import { RAGEngine } from 'resources';
+import { RAGEngine } from './resources';
 
 export interface ClientOptions {
   baseURL?: string | undefined;

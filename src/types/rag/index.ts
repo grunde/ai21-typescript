@@ -15,3 +15,5 @@ export { type UploadFileResponse } from './UploadFileResponse';
 export { type ListFilesFilters } from './ListFilesFilters';
 
 export { type UpdateFileRequest } from './UploadFileRequest';
+
+export { type FilePathOrFileObject } from './FilePathOrFileObject';
