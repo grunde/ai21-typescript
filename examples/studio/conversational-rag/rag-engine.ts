@@ -47,7 +47,7 @@ async function uploadQueryUpdateDelete() {
 
 async function listFiles() {
   const client = new AI21({ apiKey: process.env.AI21_API_KEY });
-  const files = await client.ragEngine.list({ limit: 10 });
+  const files = await client.ragEngine.list({ limit: 4 });
   console.log(files);
 }
 

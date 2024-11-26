@@ -26,6 +26,36 @@ const validatePositiveInteger = (name: string, n: unknown): number => {
   return n;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const appendBodyToFormData = (formData: FormData, body: Record<string, any>): void => {
+  for (const [key, value] of Object.entries(body)) {
+    if (Array.isArray(value)) {
+      value.forEach(item => formData.append(key, item));
+    } else {
+      formData.append(key, value);
+    }
+  }
+}
+
+export type FilePathOrFileObject =
+| string
+| File;
+
+function makeFormDataFromFilePath(filePath: string): FormData {
+  const formData = new FormData();
+  const fileStream = createReadStream(filePath);
+  const fileName = getBasename(filePath);
+
+  formData.append('file', fileStream, fileName);
+  return formData;
+}
+
+function makeFormDataFromFileObject(file: File): FormData {
+  const formData = new FormData();
+  formData.append('file', file);
+  return formData;
+}
+
 export abstract class APIClient {
   protected baseURL: string;
   protected maxRetries: number;
@@ -64,10 +94,41 @@ export abstract class APIClient {
     return this.makeRequest('delete', path, opts);
   }
 
-  async upload<Req, Rsp>(path: string, filePath: string, opts?: RequestOptions<Req>): Promise<Rsp> {
-    const formDataRequest = this.makeFormDataRequest(path, filePath, opts);
-    const response = await this.performRequest(formDataRequest);
-    return this.fetch.handleResponse<Rsp>(response) as Rsp;
+  upload<Req, Rsp>(path: string, file: string, opts?: RequestOptions<Req>): Promise<Rsp>;
+  upload<Req, Rsp>(path: string, file: File, opts?: RequestOptions<Req>): Promise<Rsp>;
+
+
+  upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
+    let formData: FormData;
+
+    if (typeof file === 'string') {
+      formData = makeFormDataFromFilePath(file);
+    } else if (file instanceof File) {
+      formData = makeFormDataFromFileObject(file);
+    } else {
+      throw new AI21Error('Invalid file type for upload');
+    }
+
+    if (opts?.body) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      appendBodyToFormData(formData, opts.body as Record<string, any>);
+    }
+  
+    const headers = {
+      ...opts?.headers,
+      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`
+    };
+
+    const options: FinalRequestOptions = {
+      method: 'post',
+      path: path,
+      body: formData,
+      headers,
+    };
+
+    return this.performRequest(options).then(
+      (response) => this.fetch.handleResponse<Rsp>(response) as Rsp,
+    );
   }
 
   protected makeFormDataRequest<Req>(
@@ -133,6 +194,7 @@ export abstract class APIClient {
     const options = {
       method,
       path,
+       
       ...opts,
     };
 
@@ -145,7 +207,8 @@ export abstract class APIClient {
     let url = `${this.baseURL}${options.path}`;
 
     if (options.query) {
-      const queryString = new URLSearchParams(options.query as Record<string, string>).toString();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const queryString = new URLSearchParams(options.query as Record<string, any>).toString();
       url += `?${queryString}`;
     }
 
