@@ -10,7 +10,7 @@ export default defineConfig({
       formats: ['es', 'cjs', 'umd'],
     },
     rollupOptions: {
-      external: ['node-fetch'],
+      external: ['node-fetch', 'fs', 'path', 'stream', 'form-data'],
       output: {
         globals: {
           'node-fetch': 'fetch', 

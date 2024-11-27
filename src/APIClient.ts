@@ -15,7 +15,8 @@ import { Fetch } from 'fetch';
 import { createReadStream } from 'fs';
 import { basename as getBasename } from 'path';
 import FormData from 'form-data';
-import { FilePathOrFileObject } from 'types/rag';
+import { FilePathOrFileObject } from './types/rag';
+import { createFormData, getBoundary, appendBodyToFormData } from './files/form-utils';
 
 const validatePositiveInteger = (name: string, n: unknown): number => {
   if (typeof n !== 'number' || !Number.isInteger(n)) {
@@ -26,33 +27,6 @@ const validatePositiveInteger = (name: string, n: unknown): number => {
   }
   return n;
 };
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const appendBodyToFormData = (formData: FormData, body: Record<string, any>): void => {
-  for (const [key, value] of Object.entries(body)) {
-    if (Array.isArray(value)) {
-      value.forEach((item) => formData.append(key, item));
-    } else {
-      formData.append(key, value);
-    }
-  }
-};
-
-
-function makeFormDataFromFilePath(filePath: string): FormData {
-  const formData = new FormData();
-  const fileStream = createReadStream(filePath);
-  const fileName = getBasename(filePath);
-
-  formData.append('file', fileStream, fileName);
-  return formData;
-}
-
-function makeFormDataFromFileObject(file: File): FormData {
-  const formData = new FormData();
-  formData.append('file', file);
-  return formData;
-}
 
 export abstract class APIClient {
   protected baseURL: string;
@@ -92,16 +66,8 @@ export abstract class APIClient {
     return this.makeRequest('delete', path, opts);
   }
 
-  upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
-    let formData: FormData;
-
-    if (typeof file === 'string') {
-      formData = makeFormDataFromFilePath(file);
-    } else if (file instanceof File) {
-      formData = makeFormDataFromFileObject(file);
-    } else {
-      throw new AI21Error('Invalid file type for upload');
-    }
+  async upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
+    const formData = await createFormData(file);
 
     if (opts?.body) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -110,7 +76,7 @@ export abstract class APIClient {
 
     const headers = {
       ...opts?.headers,
-      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
+      'Content-Type': `multipart/form-data; boundary=${await getBoundary(formData)}`,
     };
 
     const options: FinalRequestOptions = {
@@ -224,3 +190,4 @@ export abstract class APIClient {
     );
   }
 }
+
