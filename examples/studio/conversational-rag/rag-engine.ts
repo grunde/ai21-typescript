@@ -1,5 +1,5 @@
 import { AI21 } from 'ai21';
-import { FilePathOrFileObject, FileResponse, UploadFileResponse } from '../../../src/types/rag';
+import { FileResponse, UploadFileResponse } from '../../../src/types/rag';
 
 async function waitForFileProcessing(
   client: AI21,
@@ -21,11 +21,9 @@ async function waitForFileProcessing(
 async function uploadQueryUpdateDelete(fileInput) {
   const client = new AI21({ apiKey: process.env.AI21_API_KEY });
   try {
-    const uploadFileResponse: UploadFileResponse = await client.ragEngine.create(
-      fileInput,
-      { path: 'test10' },
-    );
-
+    const uploadFileResponse: UploadFileResponse = await client.ragEngine.create(fileInput, {
+      path: 'test10',
+    });
 
     const fileId = uploadFileResponse.fileId;
     let file: FileResponse = await waitForFileProcessing(client, fileId);
@@ -52,10 +50,11 @@ async function listFiles() {
   console.log(files);
 }
 
-const filePath = '/Users/amirkoblyansky/Documents/ukraine.txt'
+const filePath = '/Users/amirkoblyansky/Documents/ukraine.txt';
 const fileContent = Buffer.from('This is the content of the file.');
 const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
 
+uploadQueryUpdateDelete(filePath).catch(console.error);
 uploadQueryUpdateDelete(dummyFile).catch(console.error);
 
-// listFiles().catch(console.error);
+listFiles().catch(console.error);
