@@ -17,6 +17,7 @@ export class BrowserFilesHandler extends BaseFilesHandler {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getMultipartFormDataHeaders(formData: UnifiedFormData): Record<string, string> | null {
+    /* In browser, we don't need to set any additional headers for multipart/form-data, as the browser will handle it */
     return {};
   }
 }

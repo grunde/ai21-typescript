@@ -30,4 +30,5 @@ export type Headers = Record<string, string | null | undefined>;
 export type CrossPlatformResponse = Response | import('node-fetch').Response;
 export type CrossPlatformReadableStream = ReadableStream<Uint8Array> | import('stream/web').ReadableStream;
 
-export type UnifiedFormData = FormData | import('form-data');
+export type FormDataNode = import('form-data');
+export type UnifiedFormData = FormData | FormDataNode;
