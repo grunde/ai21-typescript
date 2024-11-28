@@ -2,7 +2,7 @@ import { AI21 } from 'ai21';
 import { FileResponse, UploadFileResponse } from '../../../src/types/rag';
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function uploadGetUpdateDelete(fileInput, label) {
@@ -41,7 +41,9 @@ const filePath = '/Users/amirkoblyansky/Documents/ukraine.txt';
 uploadGetUpdateDelete(filePath, Date.now().toString()).catch(console.error);
 
 /* Simulate a file upload passing File instance */
-const fileContent = Buffer.from('Opossums are members of the marsupial order Didelphimorphia endemic to the Americas.');
+const fileContent = Buffer.from(
+  'Opossums are members of the marsupial order Didelphimorphia endemic to the Americas.',
+);
 const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
 uploadGetUpdateDelete(dummyFile, Date.now().toString()).catch(console.error);
 

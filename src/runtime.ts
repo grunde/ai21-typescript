@@ -32,7 +32,7 @@ export function createFetchInstance(): Fetch {
 
 export function createFilesHandlerInstance(): BaseFilesHandler {
   if (isBrowser || isWebWorker) {
-    return new BrowserFilesHandler();  
+    return new BrowserFilesHandler();
   }
   return new NodeFilesHandler();
 }

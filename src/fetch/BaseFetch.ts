@@ -3,7 +3,6 @@ import { AI21Error } from '../errors';
 import { FinalRequestOptions, CrossPlatformResponse } from '../types';
 import { APIResponseProps } from '../types/API';
 
-
 export abstract class BaseFetch {
   abstract call(url: string, options: FinalRequestOptions): Promise<CrossPlatformResponse>;
   async handleResponse<T>({ response, options }: APIResponseProps) {
