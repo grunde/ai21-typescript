@@ -8,23 +8,33 @@ import {
   FilePathOrFileObject,
 } from '../../types/rag';
 import { FileResponse } from 'types/rag/FileResponse';
+import { CreateFormData } from '../../files';
 
 const RAG_ENGINE_PATH = '/library/files';
 
 export class RAGEngine extends APIResource {
-  create(file: string, body: UploadFileRequest, options?: Models.RequestOptions): Promise<UploadFileResponse>;
+  async create(
+    file: string,
+    body: UploadFileRequest,
+    options?: Models.RequestOptions,
+  ): Promise<UploadFileResponse>;
 
-  create(file: File, body: UploadFileRequest, options?: Models.RequestOptions): Promise<UploadFileResponse>;
+  async create(
+    file: File,
+    body: UploadFileRequest,
+    options?: Models.RequestOptions,
+  ): Promise<UploadFileResponse>;
 
-  create(
+  async create(
     file: FilePathOrFileObject,
     body: UploadFileRequest,
     options?: Models.RequestOptions,
   ): Promise<UploadFileResponse> {
-    return this.client.upload<UploadFileRequest, UploadFileResponse>(RAG_ENGINE_PATH, file, {
+    const formData = await new CreateFormData().createFormData(file);
+    return this.client.upload<Models.UnifiedFormData, UploadFileResponse>(RAG_ENGINE_PATH, formData, {
       body: body,
       ...options,
-    } as Models.RequestOptions<UploadFileRequest>) as Promise<UploadFileResponse>;
+    } as Models.RequestOptions<Models.UnifiedFormData>) as Promise<UploadFileResponse>;
   }
 
   get(fileId: string, options?: Models.RequestOptions): Promise<FileResponse> {

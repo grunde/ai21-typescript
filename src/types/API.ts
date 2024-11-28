@@ -29,3 +29,5 @@ export type Headers = Record<string, string | null | undefined>;
 // Platforms specific types for NodeJS and Browser
 export type CrossPlatformResponse = Response | import('node-fetch').Response;
 export type CrossPlatformReadableStream = ReadableStream<Uint8Array> | import('stream/web').ReadableStream;
+
+export type UnifiedFormData = FormData | import('form-data');

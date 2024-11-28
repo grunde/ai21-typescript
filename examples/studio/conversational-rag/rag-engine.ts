@@ -18,11 +18,11 @@ async function waitForFileProcessing(
   }
 }
 
-async function uploadQueryUpdateDelete(fileInput) {
+async function uploadQueryUpdateDelete(fileInput, label) {
   const client = new AI21({ apiKey: process.env.AI21_API_KEY });
   try {
     const uploadFileResponse: UploadFileResponse = await client.ragEngine.create(fileInput, {
-      path: 'test10',
+      path: label,
     });
 
     const fileId = uploadFileResponse.fileId;
@@ -54,7 +54,7 @@ const filePath = '/Users/amirkoblyansky/Documents/ukraine.txt';
 const fileContent = Buffer.from('This is the content of the file.');
 const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
 
-uploadQueryUpdateDelete(filePath).catch(console.error);
-uploadQueryUpdateDelete(dummyFile).catch(console.error);
+uploadQueryUpdateDelete(filePath, "abc123").catch(console.error);
+uploadQueryUpdateDelete(dummyFile, "test2").catch(console.error);
 
 listFiles().catch(console.error);

@@ -35,6 +35,7 @@ export {
   type DefaultQuery,
   type Headers,
   type CrossPlatformResponse,
+  type UnifiedFormData,
 } from './API';
 
 export {

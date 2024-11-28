@@ -8,15 +8,12 @@ import {
   HTTPMethod,
   Headers,
   CrossPlatformResponse,
+  UnifiedFormData,
 } from './types';
 import { AI21EnvConfig } from './EnvConfig';
 import { createFetchInstance } from './runtime';
 import { Fetch } from 'fetch';
-import { createReadStream } from 'fs';
-import { basename as getBasename } from 'path';
-import FormData from 'form-data';
-import { FilePathOrFileObject } from './types/rag';
-import { createFormData, getBoundary, appendBodyToFormData } from './files/form-utils';
+import { getBoundary, appendBodyToFormData } from './files/form-utils';
 
 const validatePositiveInteger = (name: string, n: unknown): number => {
   if (typeof n !== 'number' || !Number.isInteger(n)) {
@@ -66,17 +63,16 @@ export abstract class APIClient {
     return this.makeRequest('delete', path, opts);
   }
 
-  async upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
-    const formData = await createFormData(file);
-
+  async upload<Req, Rsp>(path: string, formData: UnifiedFormData, opts?: RequestOptions<Req>): Promise<Rsp> {
     if (opts?.body) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       appendBodyToFormData(formData, opts.body as Record<string, any>);
     }
 
+    const boundary = await getBoundary(formData);
     const headers = {
       ...opts?.headers,
-      'Content-Type': `multipart/form-data; boundary=${await getBoundary(formData)}`,
+      'Content-Type': `multipart/form-data; boundary=${boundary}`,
     };
 
     const options: FinalRequestOptions = {
@@ -87,43 +83,6 @@ export abstract class APIClient {
     };
 
     return this.performRequest(options).then((response) => this.fetch.handleResponse<Rsp>(response) as Rsp);
-  }
-
-  protected makeFormDataRequest<Req>(
-    path: string,
-    filePath: string,
-    opts?: RequestOptions<Req>,
-  ): FinalRequestOptions {
-    const formData = new FormData();
-    const fileStream = createReadStream(filePath);
-    const fileName = getBasename(filePath);
-
-    formData.append('file', fileStream, fileName);
-
-    if (opts?.body) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const body = opts.body as Record<string, any>;
-      for (const [key, value] of Object.entries(body)) {
-        if (Array.isArray(value)) {
-          value.forEach((item) => formData.append(key, item));
-        } else {
-          formData.append(key, value);
-        }
-      }
-    }
-
-    const headers = {
-      ...opts?.headers,
-      'Content-Type': `multipart/form-data; boundary=${formData.getBoundary()}`,
-    };
-
-    const options: FinalRequestOptions = {
-      method: 'post',
-      path: path,
-      body: formData,
-      headers,
-    };
-    return options;
   }
 
   protected getUserAgent(): string {
@@ -141,6 +100,20 @@ export abstract class APIClient {
       'User-Agent': this.getUserAgent(),
       ...this.authHeaders(opts),
     };
+    // if (opts?.body instanceof FormData) {
+    // return {
+    //   Accept: 'application/json',
+    //   'User-Agent': this.getUserAgent(),
+    //   ...this.authHeaders(opts),
+    //   };
+    // } else {
+    //   return {
+    //     Accept: 'application/json',
+    //     'Content-Type': 'application/json',
+    //     'User-Agent': this.getUserAgent(),
+    //     ...this.authHeaders(opts),
+    //   };
+    // }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

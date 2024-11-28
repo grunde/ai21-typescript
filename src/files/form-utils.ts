@@ -1,9 +1,7 @@
 import { FilePathOrFileObject } from 'types/rag';
 import * as Runtime from '../runtime';
 
-export type UnifiedFormData = FormData | import('form-data');
-
-import { Readable } from 'stream';
+import { UnifiedFormData } from 'types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const appendBodyToFormData = (formData: UnifiedFormData, body: Record<string, any>): void => {
@@ -17,22 +15,30 @@ export const appendBodyToFormData = (formData: UnifiedFormData, body: Record<str
 };
 
 // Convert WHATWG ReadableStream to Node.js Readable Stream
-function convertReadableStream(whatwgStream: ReadableStream): Readable {
-  const reader = whatwgStream.getReader();
-
-  return new Readable({
-    async read() {
-      const { done, value } = await reader.read();
-      if (done) {
-        this.push(null);
-      } else {
-        this.push(value);
-      }
-    },
-  });
+class NodeReadableStream {
+  async convertReadableStream(whatwgStream: ReadableStream): Promise<NodeJS.ReadableStream> {
+    if (Runtime.isNode) {
+      const { Readable } = await import('stream'); // Inline import of the stream module
+      const reader = whatwgStream.getReader();
+  
+      return new Readable({
+        async read() {
+          const { done, value } = await reader.read();
+          if (done) {
+            this.push(null);
+          } else {
+            this.push(value);
+          }
+        },
+      });
+    } else {
+      throw new Error('convertReadableStream is not supported in the browser environment.');
+    }
+  }
 }
 
-export async function createFormData(file: FilePathOrFileObject): Promise<UnifiedFormData> {
+export class CreateFormData {
+  async createFormData(file: FilePathOrFileObject): Promise<UnifiedFormData> {
   if (Runtime.isBrowser) {
     const formData = new FormData();
 
@@ -45,28 +51,28 @@ export async function createFormData(file: FilePathOrFileObject): Promise<Unifie
     return formData;
   } else {
     // Node environment:
-
     const { default: FormDataNode } = await import('form-data');
     const formData = new FormDataNode();
 
     if (typeof file === 'string') {
-      const { createReadStream } = await import('fs');
-      formData.append('file', createReadStream(file), { filename: file.split('/').pop() });
+      const fs = (await import('fs')).default;
+      formData.append('file', fs.createReadStream(file), { filename: file.split('/').pop() });
     } else if (Buffer.isBuffer(file)) {
       formData.append('file', file, { filename: 'TODO - add filename to buffer flow' });
     } else if (file instanceof File) {
-      const nodeStream = convertReadableStream(file.stream());
+      const nodeStream = await new NodeReadableStream().convertReadableStream(file.stream());
       formData.append('file', nodeStream, file.name);
     } else {
       throw new Error('Unsupported file type in Node.js');
     }
 
     return formData;
+    }
   }
 }
 
 export async function getBoundary(formData: UnifiedFormData): Promise<string | undefined> {
-  if (!Runtime.isBrowser) {
+  if (Runtime.isNode) {
     const { default: FormDataNode } = await import('form-data');
     if (formData instanceof FormDataNode) {
       return formData.getBoundary();
