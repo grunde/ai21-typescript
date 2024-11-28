@@ -8,7 +8,6 @@ import {
   FilePathOrFileObject,
 } from '../../types/rag';
 import { FileResponse } from 'types/rag/FileResponse';
-import { CreateFormData } from '../../files';
 
 const RAG_ENGINE_PATH = '/library/files';
 
@@ -30,8 +29,7 @@ export class RAGEngine extends APIResource {
     body: UploadFileRequest,
     options?: Models.RequestOptions,
   ): Promise<UploadFileResponse> {
-    const formData = await new CreateFormData().createFormData(file);
-    return this.client.upload<Models.UnifiedFormData, UploadFileResponse>(RAG_ENGINE_PATH, formData, {
+    return this.client.upload<Models.UnifiedFormData, UploadFileResponse>(RAG_ENGINE_PATH, file, {
       body: body,
       ...options,
     } as Models.RequestOptions<Models.UnifiedFormData>) as Promise<UploadFileResponse>;

@@ -1,40 +1,26 @@
 import { AI21 } from 'ai21';
 import { FileResponse, UploadFileResponse } from '../../../src/types/rag';
 
-async function waitForFileProcessing(
-  client: AI21,
-  fileId: string,
-  interval: number = 3000,
-): Promise<FileResponse> {
-  while (true) {
-    const file: FileResponse = await client.ragEngine.get(fileId);
-
-    if (file.status === 'PROCESSED') {
-      return file;
-    }
-
-    console.log(`File status is '${file.status}'. Waiting for it to be 'PROCESSED'...`);
-    await new Promise((resolve) => setTimeout(resolve, interval));
-  }
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function uploadQueryUpdateDelete(fileInput, label) {
+async function uploadGetUpdateDelete(fileInput, label) {
   const client = new AI21({ apiKey: process.env.AI21_API_KEY });
   try {
     const uploadFileResponse: UploadFileResponse = await client.ragEngine.create(fileInput, {
       path: label,
     });
 
-    const fileId = uploadFileResponse.fileId;
-    let file: FileResponse = await waitForFileProcessing(client, fileId);
+    let file: FileResponse = await client.ragEngine.get(uploadFileResponse.fileId);
     console.log(file);
-
-    console.log('Now updating the file labels');
+    await sleep(1000); // Give it a sec to start process before updating
+    console.log('Now updating the file labels and publicUrl...');
     await client.ragEngine.update(uploadFileResponse.fileId, {
       labels: ['test99'],
       publicUrl: 'https://www.miri.com',
     });
-    file = await client.ragEngine.get(fileId);
+    file = await client.ragEngine.get(uploadFileResponse.fileId);
     console.log(file);
 
     console.log('Now deleting the file');
@@ -50,11 +36,13 @@ async function listFiles() {
   console.log(files);
 }
 
+/* Simulate a file upload passing file path */
 const filePath = '/Users/amirkoblyansky/Documents/ukraine.txt';
-const fileContent = Buffer.from('This is the content of the file.');
-const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
+uploadGetUpdateDelete(filePath, Date.now().toString()).catch(console.error);
 
-uploadQueryUpdateDelete(filePath, "abc123").catch(console.error);
-uploadQueryUpdateDelete(dummyFile, "test2").catch(console.error);
+/* Simulate a file upload passing File instance */
+const fileContent = Buffer.from('Opossums are members of the marsupial order Didelphimorphia endemic to the Americas.');
+const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
+uploadGetUpdateDelete(dummyFile, Date.now().toString()).catch(console.error);
 
 listFiles().catch(console.error);

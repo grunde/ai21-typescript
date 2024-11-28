@@ -8,12 +8,12 @@ import {
   HTTPMethod,
   Headers,
   CrossPlatformResponse,
-  UnifiedFormData,
 } from './types';
 import { AI21EnvConfig } from './EnvConfig';
-import { createFetchInstance } from './runtime';
+import { createFetchInstance, createFilesHandlerInstance } from './runtime';
 import { Fetch } from 'fetch';
-import { getBoundary, appendBodyToFormData } from './files/form-utils';
+import { FilePathOrFileObject } from 'types/rag';
+import { BaseFilesHandler } from 'files/BaseFilesHandler';
 
 const validatePositiveInteger = (name: string, n: unknown): number => {
   if (typeof n !== 'number' || !Number.isInteger(n)) {
@@ -30,22 +30,26 @@ export abstract class APIClient {
   protected maxRetries: number;
   protected timeout: number;
   protected fetch: Fetch;
+  protected filesHandler: BaseFilesHandler;
 
   constructor({
     baseURL,
     maxRetries = AI21EnvConfig.MAX_RETRIES,
     timeout = AI21EnvConfig.TIMEOUT_SECONDS,
     fetch = createFetchInstance(),
+    filesHandler = createFilesHandlerInstance(),
   }: {
     baseURL: string;
     maxRetries?: number | undefined;
     timeout: number | undefined;
     fetch?: Fetch;
+    filesHandler?: BaseFilesHandler;
   }) {
     this.baseURL = baseURL;
     this.maxRetries = validatePositiveInteger('maxRetries', maxRetries);
     this.timeout = validatePositiveInteger('timeout', timeout);
     this.fetch = fetch;
+    this.filesHandler = filesHandler;
   }
   get<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     return this.makeRequest('get', path, opts);
@@ -63,16 +67,17 @@ export abstract class APIClient {
     return this.makeRequest('delete', path, opts);
   }
 
-  async upload<Req, Rsp>(path: string, formData: UnifiedFormData, opts?: RequestOptions<Req>): Promise<Rsp> {
+  async upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
+    const formData = await this.filesHandler.createFormData(file);
+
     if (opts?.body) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      appendBodyToFormData(formData, opts.body as Record<string, any>);
+      this.filesHandler.appendBodyToFormData(formData, opts.body as Record<string, any>);
     }
 
-    const boundary = await getBoundary(formData);
     const headers = {
       ...opts?.headers,
-      'Content-Type': `multipart/form-data; boundary=${boundary}`,
+      ...this.filesHandler.getMultipartFormDataHeaders(formData),
     };
 
     const options: FinalRequestOptions = {
@@ -94,26 +99,16 @@ export abstract class APIClient {
   }
 
   protected defaultHeaders(opts: FinalRequestOptions): Headers {
-    return {
+    const defaultHeaders = {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
       'User-Agent': this.getUserAgent(),
       ...this.authHeaders(opts),
     };
-    // if (opts?.body instanceof FormData) {
-    // return {
-    //   Accept: 'application/json',
-    //   'User-Agent': this.getUserAgent(),
-    //   ...this.authHeaders(opts),
-    //   };
-    // } else {
-    //   return {
-    //     Accept: 'application/json',
-    //     'Content-Type': 'application/json',
-    //     'User-Agent': this.getUserAgent(),
-    //     ...this.authHeaders(opts),
-    //   };
-    // }
+
+    if (opts?.body instanceof FormData) {
+      return defaultHeaders;
+    }
+    return { ...defaultHeaders, 'Content-Type': 'application/json' };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

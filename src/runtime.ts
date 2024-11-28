@@ -1,4 +1,7 @@
+import { BrowserFilesHandler } from './files/BrowserFilesHandler';
 import { BrowserFetch, Fetch, NodeFetch } from './fetch';
+import { NodeFilesHandler } from './files/NodeFilesHandler';
+import { BaseFilesHandler } from './files/BaseFilesHandler';
 
 export const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
@@ -25,4 +28,11 @@ export function createFetchInstance(): Fetch {
   }
 
   return new NodeFetch();
+}
+
+export function createFilesHandlerInstance(): BaseFilesHandler {
+  if (isBrowser || isWebWorker) {
+    return new BrowserFilesHandler();  
+  }
+  return new NodeFilesHandler();
 }
