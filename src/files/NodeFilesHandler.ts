@@ -1,12 +1,11 @@
 import { UnifiedFormData } from 'types';
 import { FilePathOrFileObject } from 'types/rag';
 import { BaseFilesHandler } from './BaseFilesHandler';
-import { FormDataNode } from 'types/API';
 
 export class NodeFilesHandler extends BaseFilesHandler {
-  async convertReadableStream(whatwgStream: ReadableStream): Promise<NodeJS.ReadableStream> {
+  async convertReadableStream(readableStream: ReadableStream): Promise<NodeJS.ReadableStream> {
     const { Readable } = await import('stream');
-    const reader = whatwgStream.getReader();
+    const reader = readableStream.getReader();
 
     return new Readable({
       async read() {
@@ -18,11 +17,6 @@ export class NodeFilesHandler extends BaseFilesHandler {
         }
       },
     });
-  }
-
-  getBoundary(formData: UnifiedFormData): string {
-    const formDataNode = formData as FormDataNode;
-    return formDataNode.getBoundary();
   }
 
   async createFormData(file: FilePathOrFileObject): Promise<UnifiedFormData> {
@@ -46,7 +40,9 @@ export class NodeFilesHandler extends BaseFilesHandler {
 
   getMultipartFormDataHeaders(formData: UnifiedFormData): Record<string, string> | null {
     if (formData instanceof FormData) {
-      throw new Error('getMultipartFormDataHeaders invoked with native browser FormData instance instead of NodeJS form-data');
+      throw new Error(
+        'getMultipartFormDataHeaders invoked with native browser FormData instance instead of NodeJS form-data',
+      );
     }
     const boundary = formData.getBoundary();
     return {
