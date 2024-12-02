@@ -8,11 +8,10 @@ function sleep(ms) {
 async function uploadGetUpdateDelete(fileInput, path) {
   const client = new AI21({ apiKey: process.env.AI21_API_KEY });
   try {
-    const uploadFileResponse: UploadFileResponse = await client.ragEngine.create(
-      {
-        file: fileInput,
-        path: path,
-      });
+    const uploadFileResponse: UploadFileResponse = await client.ragEngine.create({
+      file: fileInput,
+      path: path,
+    });
     console.log(uploadFileResponse);
     let file: FileResponse = await client.ragEngine.get(uploadFileResponse.fileId);
     console.log(file);

@@ -1,22 +1,13 @@
 import * as Models from '../../types';
 import { APIResource } from '../../APIResource';
-import {
-  UploadFileResponse,
-  UploadFileRequest,
-  ListFilesFilters,
-  UpdateFileRequest,
-} from '../../types/rag';
+import { UploadFileResponse, UploadFileRequest, ListFilesFilters, UpdateFileRequest } from '../../types/rag';
 import { FileResponse } from 'types/rag/FileResponse';
 
 const RAG_ENGINE_PATH = '/library/files';
 
 export class RAGEngine extends APIResource {
-
-  async create(
-    body: UploadFileRequest,
-    options?: Models.RequestOptions,
-  ): Promise<UploadFileResponse> {
-    const {file, ...bodyWithoutFile} = body
+  async create(body: UploadFileRequest, options?: Models.RequestOptions): Promise<UploadFileResponse> {
+    const { file, ...bodyWithoutFile } = body;
     return this.client.upload<Models.UnifiedFormData, UploadFileResponse>(RAG_ENGINE_PATH, file, {
       body: bodyWithoutFile,
       ...options,
