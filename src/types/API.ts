@@ -10,7 +10,7 @@ export type RequestOptions<Req = unknown | Record<string, unknown> | ArrayBuffer
   method?: HTTPMethod;
   path?: string;
   query?: Req | undefined;
-  body?: Req | FormData | null | undefined;
+  body?: Req | UnifiedFormData | string | null | undefined;
   headers?: Headers | undefined;
 
   maxRetries?: number;
@@ -30,5 +30,7 @@ export type Headers = Record<string, string | null | undefined>;
 export type CrossPlatformResponse = Response | import('node-fetch').Response;
 export type CrossPlatformReadableStream = ReadableStream<Uint8Array> | import('stream/web').ReadableStream;
 
-export type FormDataNode = import('form-data');
-export type UnifiedFormData = FormData | FormDataNode;
+export type UnifiedFormData = FormData | import('form-data');
+
+export type FormDataRequest = { formData: UnifiedFormData; headers: Headers };
+

@@ -1,19 +1,16 @@
 import { FinalRequestOptions, CrossPlatformResponse } from 'types';
 import { BaseFetch } from './BaseFetch';
 import { Stream, NodeSSEDecoder } from '../streaming';
-import FormData from 'form-data';
 
 export class NodeFetch extends BaseFetch {
   async call(url: string, options: FinalRequestOptions): Promise<CrossPlatformResponse> {
     const nodeFetchModule = await import('node-fetch');
     const nodeFetch = nodeFetchModule.default;
 
-    const body = options.body instanceof FormData ? options.body : JSON.stringify(options.body);
-
     return nodeFetch(url, {
       method: options.method,
       headers: options?.headers ? (options.headers as Record<string, string>) : undefined,
-      body,
+      body: options?.body ? (options.body as import('form-data') | string) : undefined,
     });
   }
 

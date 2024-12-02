@@ -36,7 +36,6 @@ export {
   type Headers,
   type CrossPlatformResponse,
   type UnifiedFormData,
-  type FormDataNode,
 } from './API';
 
 export {

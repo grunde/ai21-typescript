@@ -1,23 +1,12 @@
-import { UnifiedFormData } from 'types';
 import { FilePathOrFileObject } from 'types/rag';
 import { BaseFilesHandler } from './BaseFilesHandler';
+import { FormDataRequest } from 'types/API';
 
 export class BrowserFilesHandler extends BaseFilesHandler {
-  async createFormData(file: FilePathOrFileObject): Promise<UnifiedFormData> {
+  async prepareFormDataRequest(file: FilePathOrFileObject): Promise<FormDataRequest> {
     const formData = new FormData();
-
-    if (file instanceof window.File) {
-      formData.append('file', file);
-    } else {
-      throw new Error('Unsupported file type in browser');
-    }
-
-    return formData;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getMultipartFormDataHeaders(formData: UnifiedFormData): Record<string, string> | null {
-    /* In browser, we don't need to set any additional headers for multipart/form-data, as the browser will handle it */
-    return {};
+    formData.append('file', file);
+    // Note that when uploading files in a browser, the browser handles the multipart/form-data headers
+    return { formData, headers: {} };
   }
 }

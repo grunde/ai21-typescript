@@ -11,7 +11,7 @@ async function uploadGetUpdateDelete(fileInput, label) {
     const uploadFileResponse: UploadFileResponse = await client.ragEngine.create(fileInput, {
       path: label,
     });
-
+    console.log(uploadFileResponse);
     let file: FileResponse = await client.ragEngine.get(uploadFileResponse.fileId);
     console.log(file);
     await sleep(1000); // Give it a sec to start process before updating

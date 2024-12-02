@@ -8,6 +8,7 @@ import {
   HTTPMethod,
   Headers,
   CrossPlatformResponse,
+  UnifiedFormData,
 } from './types';
 import { AI21EnvConfig } from './EnvConfig';
 import { createFetchInstance, createFilesHandlerInstance } from './runtime';
@@ -24,6 +25,19 @@ const validatePositiveInteger = (name: string, n: unknown): number => {
   }
   return n;
 };
+
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const appendBodyToFormData = (formData: UnifiedFormData, body: Record<string, any>): void => {
+    for (const [key, value] of Object.entries(body)) {
+      if (Array.isArray(value)) {
+        value.forEach((item) => formData.append(key, item));
+      } else {
+        formData.append(key, value);
+      }
+    }
+  };
+
 
 export abstract class APIClient {
   protected baseURL: string;
@@ -52,38 +66,38 @@ export abstract class APIClient {
     this.filesHandler = filesHandler;
   }
   get<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
-    return this.makeRequest('get', path, opts);
+    return this.prepareAndExecuteRequest('get', path, opts);
   }
 
   post<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
-    return this.makeRequest('post', path, opts);
+    return this.prepareAndExecuteRequest('post', path, opts);
   }
 
   put<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
-    return this.makeRequest('put', path, opts);
+    return this.prepareAndExecuteRequest('put', path, opts);
   }
 
   delete<Req, Rsp>(path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
-    return this.makeRequest('delete', path, opts);
+    return this.prepareAndExecuteRequest('delete', path, opts);
   }
 
   async upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
-    const formData = await this.filesHandler.createFormData(file);
+    const formDataRequest = await this.filesHandler.prepareFormDataRequest(file);
 
     if (opts?.body) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.filesHandler.appendBodyToFormData(formData, opts.body as Record<string, any>);
+      appendBodyToFormData(formDataRequest.formData, opts.body as Record<string, any>);
     }
 
     const headers = {
       ...opts?.headers,
-      ...this.filesHandler.getMultipartFormDataHeaders(formData),
+      ...formDataRequest.headers,
     };
 
     const options: FinalRequestOptions = {
       method: 'post',
       path: path,
-      body: formData,
+      body: formDataRequest.formData,
       headers,
     };
 
@@ -105,10 +119,7 @@ export abstract class APIClient {
       ...this.authHeaders(opts),
     };
 
-    if (opts?.body instanceof FormData) {
-      return defaultHeaders;
-    }
-    return { ...defaultHeaders, 'Content-Type': 'application/json' };
+    return { ...defaultHeaders, ...opts.headers };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -116,27 +127,34 @@ export abstract class APIClient {
     return {};
   }
 
-  private makeRequest<Req, Rsp>(method: HTTPMethod, path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  private buildFullUrl(path: string, query?: Record<string, unknown>): string {
+    let url = `${this.baseURL}${path}`;
+    if (query) {
+      const queryString = new URLSearchParams(query as Record<string, string>).toString();
+      url += `?${queryString}`;
+    }
+    return url;
+  }
+
+  private prepareAndExecuteRequest<Req, Rsp>(method: HTTPMethod, path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
     const options = {
       method,
       path,
-
       ...opts,
-    };
+    } as FinalRequestOptions;
 
-    return this.performRequest(options as FinalRequestOptions).then(
+    if (options?.body) {
+      options.body = JSON.stringify(options.body);
+      options.headers = { ...options.headers, 'Content-Type': 'application/json' };
+    }
+
+    return this.performRequest(options).then(
       (response) => this.fetch.handleResponse<Rsp>(response) as Rsp,
     );
   }
 
   private async performRequest(options: FinalRequestOptions): Promise<APIResponseProps> {
-    let url = `${this.baseURL}${options.path}`;
-
-    if (options.query) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const queryString = new URLSearchParams(options.query as Record<string, any>).toString();
-      url += `?${queryString}`;
-    }
+    const url = this.buildFullUrl(options.path, options.query as Record<string, unknown>);
 
     const headers = {
       ...this.defaultHeaders(options),
