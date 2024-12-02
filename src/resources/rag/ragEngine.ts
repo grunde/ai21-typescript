@@ -5,32 +5,20 @@ import {
   UploadFileRequest,
   ListFilesFilters,
   UpdateFileRequest,
-  FilePathOrFileObject,
 } from '../../types/rag';
 import { FileResponse } from 'types/rag/FileResponse';
 
 const RAG_ENGINE_PATH = '/library/files';
 
 export class RAGEngine extends APIResource {
-  async create(
-    file: string,
-    body: UploadFileRequest,
-    options?: Models.RequestOptions,
-  ): Promise<UploadFileResponse>;
 
   async create(
-    file: File,
-    body: UploadFileRequest,
-    options?: Models.RequestOptions,
-  ): Promise<UploadFileResponse>;
-
-  async create(
-    file: FilePathOrFileObject,
     body: UploadFileRequest,
     options?: Models.RequestOptions,
   ): Promise<UploadFileResponse> {
+    const {file, ...bodyWithoutFile} = body
     return this.client.upload<Models.UnifiedFormData, UploadFileResponse>(RAG_ENGINE_PATH, file, {
-      body: body,
+      body: bodyWithoutFile,
       ...options,
     } as Models.RequestOptions<Models.UnifiedFormData>) as Promise<UploadFileResponse>;
   }
@@ -49,15 +37,15 @@ export class RAGEngine extends APIResource {
     ) as Promise<null>;
   }
 
-  list(body: ListFilesFilters | null, options?: Models.RequestOptions): Promise<FileResponse[]> {
+  list(body?: ListFilesFilters, options?: Models.RequestOptions): Promise<FileResponse[]> {
     return this.client.get<ListFilesFilters | null, FileResponse[]>(RAG_ENGINE_PATH, {
       query: body,
       ...options,
     } as Models.RequestOptions<ListFilesFilters | null>) as Promise<FileResponse[]>;
   }
 
-  update(fileId: string, body: UpdateFileRequest, options?: Models.RequestOptions): Promise<null> {
-    return this.client.put<UpdateFileRequest, null>(`${RAG_ENGINE_PATH}/${fileId}`, {
+  update(body: UpdateFileRequest, options?: Models.RequestOptions): Promise<null> {
+    return this.client.put<UpdateFileRequest, null>(`${RAG_ENGINE_PATH}/${body.fileId}`, {
       body,
       ...options,
     } as Models.RequestOptions<UpdateFileRequest>) as Promise<null>;

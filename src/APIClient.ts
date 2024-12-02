@@ -26,18 +26,16 @@ const validatePositiveInteger = (name: string, n: unknown): number => {
   return n;
 };
 
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const appendBodyToFormData = (formData: UnifiedFormData, body: Record<string, any>): void => {
-    for (const [key, value] of Object.entries(body)) {
-      if (Array.isArray(value)) {
-        value.forEach((item) => formData.append(key, item));
-      } else {
-        formData.append(key, value);
-      }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const appendBodyToFormData = (formData: UnifiedFormData, body: Record<string, any>): void => {
+  for (const [key, value] of Object.entries(body)) {
+    if (Array.isArray(value)) {
+      value.forEach((item) => formData.append(key, item));
+    } else {
+      formData.append(key, value);
     }
-  };
-
+  }
+};
 
 export abstract class APIClient {
   protected baseURL: string;
@@ -136,7 +134,11 @@ export abstract class APIClient {
     return url;
   }
 
-  private prepareAndExecuteRequest<Req, Rsp>(method: HTTPMethod, path: string, opts?: RequestOptions<Req>): Promise<Rsp> {
+  private prepareAndExecuteRequest<Req, Rsp>(
+    method: HTTPMethod,
+    path: string,
+    opts?: RequestOptions<Req>,
+  ): Promise<Rsp> {
     const options = {
       method,
       path,
@@ -148,9 +150,7 @@ export abstract class APIClient {
       options.headers = { ...options.headers, 'Content-Type': 'application/json' };
     }
 
-    return this.performRequest(options).then(
-      (response) => this.fetch.handleResponse<Rsp>(response) as Rsp,
-    );
+    return this.performRequest(options).then((response) => this.fetch.handleResponse<Rsp>(response) as Rsp);
   }
 
   private async performRequest(options: FinalRequestOptions): Promise<APIResponseProps> {

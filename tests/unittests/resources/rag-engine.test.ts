@@ -31,12 +31,12 @@ describe('RAGEngine', () => {
 
   it('should upload a file and return the fileId', async () => {
     const fileInput = 'path/to/file.txt';
-    const body = { path: 'label' };
+    const body = { file: fileInput, path: 'label' };
     const expectedResponse = { fileId: '12345' };
 
     mockClient.upload.mockResolvedValue(expectedResponse);
 
-    const response = await ragEngine.create(fileInput, body, options);
+    const response = await ragEngine.create(body);
 
     expect(mockClient.upload).toHaveBeenCalledWith(
       '/library/files',
@@ -77,11 +77,11 @@ describe('RAGEngine', () => {
 
   it('should update a file by ID and return null', async () => {
     const fileId = '12345';
-    const body = { labels: ['test'], publicUrl: 'https://example.com' };
+    const body = { fileId, labels: ['test'], publicUrl: 'https://example.com' };
 
     mockClient.put.mockResolvedValue(null);
 
-    const response = await ragEngine.update(fileId, body, options);
+    const response = await ragEngine.update(body);
 
     expect(mockClient.put).toHaveBeenCalledWith(
       `/library/files/${fileId}`,

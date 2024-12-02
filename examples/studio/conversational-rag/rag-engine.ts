@@ -5,18 +5,21 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function uploadGetUpdateDelete(fileInput, label) {
+async function uploadGetUpdateDelete(fileInput, path) {
   const client = new AI21({ apiKey: process.env.AI21_API_KEY });
   try {
-    const uploadFileResponse: UploadFileResponse = await client.ragEngine.create(fileInput, {
-      path: label,
-    });
+    const uploadFileResponse: UploadFileResponse = await client.ragEngine.create(
+      {
+        file: fileInput,
+        path: path,
+      });
     console.log(uploadFileResponse);
     let file: FileResponse = await client.ragEngine.get(uploadFileResponse.fileId);
     console.log(file);
     await sleep(1000); // Give it a sec to start process before updating
     console.log('Now updating the file labels and publicUrl...');
-    await client.ragEngine.update(uploadFileResponse.fileId, {
+    await client.ragEngine.update({
+      fileId: uploadFileResponse.fileId,
       labels: ['test99'],
       publicUrl: 'https://www.miri.com',
     });
