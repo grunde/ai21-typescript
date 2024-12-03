@@ -1,4 +1,4 @@
-export { AI21 } from './AI21';
+export { AI21, type ClientOptions } from './AI21';
 export { VERSION } from './version';
 export {
   type DocumentSchema,
