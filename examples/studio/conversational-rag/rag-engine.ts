@@ -1,4 +1,4 @@
-import { AI21, FileResponse, UploadFileResponse, isNode } from 'ai21';
+import { AI21, FileResponse, UploadFileResponse, isBrowser } from 'ai21';
 import path from 'path';
 
 function sleep(ms) {
@@ -73,11 +73,10 @@ const fileContent = Buffer.from(
 );
 const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
 
-if (isNode) {
+if (isBrowser) {
+  console.log('Cannot run upload examples in Browser environment');
+} else {
   console.log('Running file upload in Node environment');
   uploadGetUpdateDelete(dummyFile, Date.now().toString()).catch(console.error);
   listFiles().catch(console.error);
-} else {
-  // TODO - add node support for files
-  console.log('Cannot run uploads in not Node environment');
 }
