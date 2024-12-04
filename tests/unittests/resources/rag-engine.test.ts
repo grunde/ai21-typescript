@@ -1,5 +1,5 @@
 import * as Models from '../../../src/types';
-import { RAGEngine } from '../../../src/resources/rag/ragEngine';
+import { Files } from '../../../src/resources/rag/files';
 import { APIClient } from '../../../src/APIClient';
 
 class MockAPIClient extends APIClient {
@@ -10,7 +10,7 @@ class MockAPIClient extends APIClient {
 }
 
 describe('RAGEngine', () => {
-  let ragEngine: RAGEngine;
+  let files: Files;
   let mockClient: MockAPIClient;
   const dummyAPIKey = "test-api-key";
   const options: Models.RequestOptions = { headers: { 'Authorization': `Bearer ${dummyAPIKey}` } };
@@ -22,7 +22,7 @@ describe('RAGEngine', () => {
       timeout: 5000,
     });
 
-    ragEngine = new RAGEngine(mockClient);
+    files = new Files(mockClient);
   });
 
   afterEach(() => {
@@ -36,7 +36,7 @@ describe('RAGEngine', () => {
 
     mockClient.upload.mockResolvedValue(expectedResponse);
 
-    const response = await ragEngine.create(body);
+    const response = await files.create(body);
 
     expect(mockClient.upload).toHaveBeenCalledWith(
       '/library/files',
@@ -52,7 +52,7 @@ describe('RAGEngine', () => {
 
     mockClient.get.mockResolvedValue(expectedResponse);
 
-    const response = await ragEngine.get(fileId, options);
+    const response = await files.get(fileId, options);
 
     expect(mockClient.get).toHaveBeenCalledWith(
       `/library/files/${fileId}`,
@@ -66,7 +66,7 @@ describe('RAGEngine', () => {
 
     mockClient.delete.mockResolvedValue(null);
 
-    const response = await ragEngine.delete(fileId, options);
+    const response = await files.delete(fileId, options);
 
     expect(mockClient.delete).toHaveBeenCalledWith(
       `/library/files/${fileId}`,
@@ -81,7 +81,7 @@ describe('RAGEngine', () => {
 
     mockClient.put.mockResolvedValue(null);
 
-    const response = await ragEngine.update(body);
+    const response = await files.update(body);
 
     expect(mockClient.put).toHaveBeenCalledWith(
       `/library/files/${fileId}`,
@@ -96,7 +96,7 @@ describe('RAGEngine', () => {
 
     mockClient.get.mockResolvedValue(expectedResponse);
 
-    const response = await ragEngine.list(filters, options);
+    const response = await files.list(filters, options);
 
     expect(mockClient.get).toHaveBeenCalledWith(
       '/library/files',

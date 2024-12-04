@@ -1,2 +1,2 @@
 export { ConversationalRag } from './conversationalRag';
-export { RAGEngine } from './ragEngine';
+export { Files } from './files';

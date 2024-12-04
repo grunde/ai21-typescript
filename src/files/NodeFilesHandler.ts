@@ -25,6 +25,9 @@ export class NodeFilesHandler extends BaseFilesHandler {
 
     if (typeof file === 'string') {
       const fs = (await import('fs')).default;
+      if (!fs.existsSync(file)) {
+        throw new Error(`File not found: ${file}`);
+      }
       formData.append('file', fs.createReadStream(file), { filename: file.split('/').pop() });
     } else if (file instanceof File) {
       const nodeStream = await this.convertReadableStream(file.stream());
