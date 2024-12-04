@@ -15,6 +15,7 @@ import { AI21EnvConfig } from './EnvConfig';
 import { createFetchInstance, createFilesHandlerInstance } from './runtime';
 import { Fetch } from 'fetch';
 import { BaseFilesHandler } from 'files/BaseFilesHandler';
+import { FormDataRequest } from 'types/API';
 
 const validatePositiveInteger = (name: string, n: unknown): number => {
   if (typeof n !== 'number' || !Number.isInteger(n)) {
@@ -79,27 +80,27 @@ export abstract class APIClient {
     return this.prepareAndExecuteRequest('delete', path, opts);
   }
 
-  async upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
-    const formDataRequest = await this.filesHandler.prepareFormDataRequest(file);
-
-    if (opts?.body) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      appendBodyToFormData(formDataRequest.formData, opts.body as Record<string, any>);
-    }
-
-    const headers = {
-      ...opts?.headers,
-      ...formDataRequest.headers,
-    };
-
-    const options: FinalRequestOptions = {
-      method: 'post',
-      path: path,
-      body: formDataRequest.formData,
-      headers,
-    };
-
-    return this.performRequest(options).then((response) => this.fetch.handleResponse<Rsp>(response) as Rsp);
+  upload<Req, Rsp>(path: string, file: FilePathOrFileObject, opts?: RequestOptions<Req>): Promise<Rsp> {
+    return this.filesHandler.prepareFormDataRequest(file).then((formDataRequest: FormDataRequest) => {
+      if (opts?.body) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        appendBodyToFormData(formDataRequest.formData, opts.body as Record<string, any>);
+      }
+  
+      const headers = {
+        ...opts?.headers,
+        ...formDataRequest.headers,
+      };
+  
+      const options: FinalRequestOptions = {
+        method: 'post',
+        path: path,
+        body: formDataRequest.formData,
+        headers,
+      };
+  
+      return this.performRequest(options).then((response) => this.fetch.handleResponse<Rsp>(response) as Rsp);
+    });
   }
 
   protected getUserAgent(): string {
