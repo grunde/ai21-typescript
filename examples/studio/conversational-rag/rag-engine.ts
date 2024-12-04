@@ -55,10 +55,9 @@ async function uploadGetUpdateDelete(fileInput, path) {
     console.log('Starting file deletion...');
     await client.files.delete(uploadFileResponse.fileId);
     console.log('✓ File deletion completed');
-    
+
     // Add buffer time between operations
     await sleep(2000);
-    
   } catch (error) {
     console.error('❌ Error in uploadGetUpdateDelete:', error);
     throw error;
@@ -76,6 +75,15 @@ const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'u
 if (isBrowser) {
   console.log('Cannot run upload examples in Browser environment');
 } else {
+  /* Log environment details */
+  console.log('=== Environment Information ===');
+  console.log(`Node.js Version: ${process.version}`);
+  console.log(`Platform: ${process.platform}`);
+  console.log(`Architecture: ${process.arch}`);
+  console.log(`Process ID: ${process.pid}`);
+  console.log(`Current Working Directory: ${process.cwd()}`);
+  console.log('===========================\n');
+
   /* Run all operations sequentially */
   (async () => {
     try {
