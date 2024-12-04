@@ -73,11 +73,10 @@ const fileContent = Buffer.from(
 );
 const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
 
-if (isNode){
+if (isNode) {
   uploadGetUpdateDelete(dummyFile, Date.now().toString()).catch(console.error);
   listFiles().catch(console.error);
-}
-else{
+} else {
   // TODO - add node support for files
   console.log('Cannot run uploads in not Node environment');
 }
