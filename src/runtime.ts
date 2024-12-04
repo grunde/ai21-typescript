@@ -24,15 +24,19 @@ export const isNode =
 
 export function createFetchInstance(): Fetch {
   if (isBrowser || isWebWorker) {
+    console.log('Creating BrowserFetch instance');
     return new BrowserFetch();
   }
 
+  console.log('Creating NodeFetch instance');
   return new NodeFetch();
 }
 
 export function createFilesHandlerInstance(): BaseFilesHandler {
   if (isBrowser || isWebWorker) {
+    console.log('Creating BrowserFilesHandler instance');
     return new BrowserFilesHandler();
   }
+  console.log('Creating NodeFilesHandler instance');
   return new NodeFilesHandler();
 }

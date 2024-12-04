@@ -113,7 +113,7 @@ if (isBrowser) {
       } else {
         console.log(`File found: ${filePath}`);
       }
-      
+
       await uploadGetUpdateDelete(filePath, Date.now().toString());
       console.log('=== First operation completed ===\n');
       await sleep(2000);
