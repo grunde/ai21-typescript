@@ -1,8 +1,3 @@
-import { BrowserFilesHandler } from './files/BrowserFilesHandler';
-import { BrowserFetch, Fetch, NodeFetch } from './fetch';
-import { NodeFilesHandler } from './files/NodeFilesHandler';
-import { BaseFilesHandler } from './files/BaseFilesHandler';
-
 export const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
 /**
@@ -21,22 +16,3 @@ export const isWebWorker =
 
 export const isNode =
   typeof process !== 'undefined' && Boolean(process.version) && Boolean(process.versions?.node);
-
-export function createFetchInstance(): Fetch {
-  if (isBrowser || isWebWorker) {
-    console.log('Creating BrowserFetch instance');
-    return new BrowserFetch();
-  }
-
-  console.log('Creating NodeFetch instance');
-  return new NodeFetch();
-}
-
-export function createFilesHandlerInstance(): BaseFilesHandler {
-  if (isBrowser || isWebWorker) {
-    console.log('Creating BrowserFilesHandler instance');
-    return new BrowserFilesHandler();
-  }
-  console.log('Creating NodeFilesHandler instance');
-  return new NodeFilesHandler();
-}

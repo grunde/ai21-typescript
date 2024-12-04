@@ -12,7 +12,7 @@ import {
   FilePathOrFileObject,
 } from './types';
 import { AI21EnvConfig } from './EnvConfig';
-import { createFetchInstance, createFilesHandlerInstance } from './runtime';
+import { createFetchInstance, createFilesHandlerInstance } from './factory';
 import { Fetch } from 'fetch';
 import { BaseFilesHandler } from 'files/BaseFilesHandler';
 import { FormDataRequest } from 'types/API';
