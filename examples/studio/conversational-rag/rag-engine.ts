@@ -74,6 +74,7 @@ const fileContent = Buffer.from(
 const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
 
 if (isNode) {
+  console.log('Running file upload in Node environment');
   uploadGetUpdateDelete(dummyFile, Date.now().toString()).catch(console.error);
   listFiles().catch(console.error);
 } else {
