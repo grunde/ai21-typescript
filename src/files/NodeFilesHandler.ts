@@ -22,24 +22,33 @@ export class NodeFilesHandler extends BaseFilesHandler {
   async prepareFormDataRequest(file: FilePathOrFileObject): Promise<FormDataRequest> {
     console.log('Preparing form data request for Node.js');
     try {
-      const FormData = await import('form-data').then((m) => m.default || m);
+      const FormData = await import('form-data').then(m => m.default || m);
       console.log('Successfully imported form-data module');
-
+      
       const formData = new FormData();
       console.log('Created new FormData instance');
 
       if (typeof file === 'string') {
-        const fs = await import('fs').then((m) => m.default || m);
+        const fs = await import('fs').then(m => m.default || m);
         if (!fs.existsSync(file)) {
           throw new Error(`File not found: ${file}`);
         }
         console.log(`Appending file from path: ${file}`);
         formData.append('file', fs.createReadStream(file), { filename: file.split('/').pop() });
-      } else if (file instanceof File) {
-        console.log('Converting ReadableStream to Node stream');
-        const nodeStream = await this.convertReadableStream(file.stream());
-        console.log('Appending file from File instance');
-        formData.append('file', nodeStream, file.name);
+      } else if (file && typeof file === 'object') {
+        console.log('Processing file object:', file);
+        if ('buffer' in file) {
+          // Handle Node.js file-like object
+          console.log('Appending file from buffer');
+          formData.append('file', file.buffer, { filename: file.name, contentType: file.type });
+        } else if ('stream' in file && typeof file.stream === 'function') {
+          // Handle File object
+          console.log('Converting and appending file from stream');
+          const nodeStream = await this.convertReadableStream(file.stream());
+          formData.append('file', nodeStream, { filename: file.name, contentType: file.type });
+        } else {
+          throw new Error(`Invalid file object structure: ${JSON.stringify(file)}`);
+        }
       } else {
         throw new Error(`Unsupported file type for Node.js file upload flow: ${file}`);
       }
