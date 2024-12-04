@@ -1,5 +1,6 @@
 import { AI21, FileResponse, UploadFileResponse } from 'ai21';
 import path from 'path';
+import fs from 'fs';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -72,6 +73,23 @@ async function listFiles() {
 
 const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
+const createNodeFile = (content: Buffer, filename: string, type: string) => {
+  if (process.platform === 'linux') {
+    console.log('Running on Linux (GitHub Actions)');
+    // Special handling for Linux (GitHub Actions)
+    return {
+      name: filename,
+      type: type,
+      buffer: content,
+      [Symbol.toStringTag]: 'File'
+    };
+  } else {
+    console.log('Running on other platforms');
+    // Regular handling for other platforms
+    return new File([content], filename, { type });
+  }
+};
+
 if (isBrowser) {
   console.log('Cannot run upload examples in Browser environment');
 } else {
@@ -89,7 +107,10 @@ if (isBrowser) {
     try {
       console.log('=== Starting first operation ===');
       // First operation - upload file from path
-      const filePath = path.join(process.cwd(), 'examples/studio/conversational-rag/files', 'meerkat.txt');
+      const filePath = path.resolve(process.cwd(), 'examples/studio/conversational-rag/files', 'meerkat.txt');
+      if (!fs.existsSync(filePath)) {
+        throw new Error(`File not found: ${filePath}`);
+      }
       await uploadGetUpdateDelete(filePath, Date.now().toString());
       console.log('=== First operation completed ===\n');
       await sleep(2000);
@@ -99,7 +120,7 @@ if (isBrowser) {
       const fileContent = Buffer.from(
         'Opossums are members of the marsupial order Didelphimorphia endemic to the Americas.',
       );
-      const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
+      const dummyFile = createNodeFile(fileContent, 'example.txt', 'text/plain');
       await uploadGetUpdateDelete(dummyFile, Date.now().toString());
       console.log('=== Second operation completed ===\n');
       await sleep(2000);
