@@ -1,7 +1,7 @@
 import { FilePathOrFileObject } from 'types';
 import { BaseFilesHandler } from './BaseFilesHandler';
 import { FormDataRequest } from 'types/API';
-import { isNode } from 'runtime';
+import { isNode } from '../runtime';
 
 export class NodeFilesHandler extends BaseFilesHandler {
   private async convertReadableStream(readableStream: ReadableStream): Promise<NodeJS.ReadableStream> {
