@@ -1,5 +1,4 @@
-import { AI21 } from 'ai21';
-import { FileResponse, UploadFileResponse } from '../../../src/types';
+import { AI21, FileResponse, UploadFileResponse, isNode } from 'ai21';
 import path from 'path';
 
 function sleep(ms) {
@@ -73,6 +72,12 @@ const fileContent = Buffer.from(
   'Opossums are members of the marsupial order Didelphimorphia endemic to the Americas.',
 );
 const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
-uploadGetUpdateDelete(dummyFile, Date.now().toString()).catch(console.error);
 
-listFiles().catch(console.error);
+if (isNode){
+  uploadGetUpdateDelete(dummyFile, Date.now().toString()).catch(console.error);
+  listFiles().catch(console.error);
+}
+else{
+  // TODO - add node support for files
+  console.log('Cannot run uploads in not Node environment');
+}

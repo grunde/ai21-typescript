@@ -104,7 +104,7 @@ describe('RAGEngine', () => {
       '/library/files',
       {
         query: filters,
-        headers: { 'Authorization': `Bearer ${dummyAPIKey}` }
+        ...options,
       }
     );
     expect(response).toEqual(expectedResponse);
