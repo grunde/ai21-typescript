@@ -81,7 +81,7 @@ const createNodeFile = (content: Buffer, filename: string, type: string) => {
       name: filename,
       type: type,
       buffer: content,
-      [Symbol.toStringTag]: 'File'
+      [Symbol.toStringTag]: 'File',
     };
   } else {
     console.log('Running on other platforms');
@@ -110,7 +110,10 @@ if (isBrowser) {
       const filePath = path.resolve(process.cwd(), 'examples/studio/conversational-rag/files', 'meerkat.txt');
       if (!fs.existsSync(filePath)) {
         throw new Error(`File not found: ${filePath}`);
+      } else {
+        console.log(`File found: ${filePath}`);
       }
+      
       await uploadGetUpdateDelete(filePath, Date.now().toString());
       console.log('=== First operation completed ===\n');
       await sleep(2000);
