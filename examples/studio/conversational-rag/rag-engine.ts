@@ -1,4 +1,4 @@
-import { AI21, FileResponse, UploadFileResponse, isBrowser } from 'ai21';
+import { AI21, FileResponse, UploadFileResponse } from 'ai21';
 import path from 'path';
 
 function sleep(ms) {
@@ -31,7 +31,7 @@ async function uploadGetUpdateDelete(fileInput, path) {
       file: fileInput,
       path: path,
     });
-    console.log(uploadFileResponse);
+    console.log(`Uploaded file with id ${uploadFileResponse}`);
 
     let file: FileResponse = await waitForFileProcessing(client, uploadFileResponse.fileId);
     console.log(file);
@@ -62,20 +62,21 @@ async function listFiles() {
   console.log(files);
 }
 
-/* Simulate file upload passing a path to file */
-const filePath = path.join(process.cwd(), 'examples/studio/conversational-rag/files', 'meerkat.txt'); // Use process.cwd() to get the current working directory
-
-uploadGetUpdateDelete(filePath, Date.now().toString()).catch(console.error);
-
-/* Simulate file upload passing File instance */
-const fileContent = Buffer.from(
-  'Opossums are members of the marsupial order Didelphimorphia endemic to the Americas.',
-);
-const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
+const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
 if (isBrowser) {
   console.log('Cannot run upload examples in Browser environment');
 } else {
+  /* Simulate file upload passing a path to file */
+  const filePath = path.join(process.cwd(), 'examples/studio/conversational-rag/files', 'meerkat.txt'); // Use process.cwd() to get the current working directory
+
+  uploadGetUpdateDelete(filePath, Date.now().toString()).catch(console.error);
+
+  /* Simulate file upload passing File instance */
+  const fileContent = Buffer.from(
+    'Opossums are members of the marsupial order Didelphimorphia endemic to the Americas.',
+  );
+  const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
   console.log('Running file upload in Node environment');
   uploadGetUpdateDelete(dummyFile, Date.now().toString()).catch(console.error);
   listFiles().catch(console.error);
