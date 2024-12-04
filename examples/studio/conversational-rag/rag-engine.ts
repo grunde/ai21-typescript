@@ -60,7 +60,7 @@ async function uploadGetUpdateDelete(fileInput, path) {
 async function listFiles() {
   const client = new AI21({ apiKey: process.env.AI21_API_KEY });
   const files = await client.files.list({ limit: 4 });
-  console.log(files);
+  console.log(`Listed files: ${files}`);
 }
 
 const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
@@ -68,17 +68,25 @@ const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'u
 if (isBrowser) {
   console.log('Cannot run upload examples in Browser environment');
 } else {
-  /* Simulate file upload passing a path to file */
-  const filePath = path.join(process.cwd(), 'examples/studio/conversational-rag/files', 'meerkat.txt'); // Use process.cwd() to get the current working directory
+  /* Run all operations sequentially */
+  (async () => {
+    try {
+      // First operation - upload file from path
+      const filePath = path.join(process.cwd(), 'examples/studio/conversational-rag/files', 'meerkat.txt');
+      await uploadGetUpdateDelete(filePath, Date.now().toString());
 
-  uploadGetUpdateDelete(filePath, Date.now().toString()).catch(console.error);
+      // Second operation - upload file from File instance
+      const fileContent = Buffer.from(
+        'Opossums are members of the marsupial order Didelphimorphia endemic to the Americas.',
+      );
+      const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
+      console.log('Running file upload in Node environment');
+      await uploadGetUpdateDelete(dummyFile, Date.now().toString());
 
-  /* Simulate file upload passing File instance */
-  const fileContent = Buffer.from(
-    'Opossums are members of the marsupial order Didelphimorphia endemic to the Americas.',
-  );
-  const dummyFile = new File([fileContent], 'example.txt', { type: 'text/plain' });
-  console.log('Running file upload in Node environment');
-  uploadGetUpdateDelete(dummyFile, Date.now().toString()).catch(console.error);
-  listFiles().catch(console.error);
+      // Finally, list the files
+      await listFiles();
+    } catch (error) {
+      console.error(error);
+    }
+  })();
 }
