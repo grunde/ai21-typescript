@@ -31,7 +31,7 @@ describe('RAGEngine', () => {
 
   it('should upload a file and return the fileId', async () => {
     const fileInput = 'path/to/file.txt';
-    const body = { file: fileInput, path: 'label' };
+    const body = { file: fileInput, path: 'path' };
     const expectedResponse = { fileId: '12345' };
 
     mockClient.upload.mockResolvedValue(expectedResponse);
@@ -41,7 +41,9 @@ describe('RAGEngine', () => {
     expect(mockClient.upload).toHaveBeenCalledWith(
       '/library/files',
       fileInput,
-      { body, headers: { 'Authorization': `Bearer ${dummyAPIKey}` } }
+      {
+        body: { path: 'path' },
+      }
     );
     expect(response).toEqual(expectedResponse);
   });
@@ -56,7 +58,7 @@ describe('RAGEngine', () => {
 
     expect(mockClient.get).toHaveBeenCalledWith(
       `/library/files/${fileId}`,
-      { headers: { 'Authorization': `Bearer ${dummyAPIKey}` } }
+      { ...options }
     );
     expect(response).toEqual(expectedResponse);
   });
@@ -70,7 +72,7 @@ describe('RAGEngine', () => {
 
     expect(mockClient.delete).toHaveBeenCalledWith(
       `/library/files/${fileId}`,
-      { headers: { 'Authorization': `Bearer ${dummyAPIKey}` } }
+      { ...options } 
     );
     expect(response).toBeNull();
   });
@@ -85,7 +87,7 @@ describe('RAGEngine', () => {
 
     expect(mockClient.put).toHaveBeenCalledWith(
       `/library/files/${fileId}`,
-      { body, headers: { 'Authorization': `Bearer ${dummyAPIKey}` } }
+      { body },
     );
     expect(response).toBeNull();
   });
@@ -100,7 +102,10 @@ describe('RAGEngine', () => {
 
     expect(mockClient.get).toHaveBeenCalledWith(
       '/library/files',
-      { query: filters, headers: { 'Authorization': `Bearer ${dummyAPIKey}` } }
+      {
+        query: filters,
+        headers: { 'Authorization': `Bearer ${dummyAPIKey}` }
+      }
     );
     expect(response).toEqual(expectedResponse);
   });

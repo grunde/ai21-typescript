@@ -9,11 +9,11 @@ import {
   Headers,
   CrossPlatformResponse,
   UnifiedFormData,
+  FilePathOrFileObject,
 } from './types';
 import { AI21EnvConfig } from './EnvConfig';
 import { createFetchInstance, createFilesHandlerInstance } from './runtime';
 import { Fetch } from 'fetch';
-import { FilePathOrFileObject } from 'types/rag';
 import { BaseFilesHandler } from 'files/BaseFilesHandler';
 
 const validatePositiveInteger = (name: string, n: unknown): number => {

@@ -1,4 +1,4 @@
-import { FilePathOrFileObject } from 'types/rag';
+import { FilePathOrFileObject } from 'types';
 import { BaseFilesHandler } from './BaseFilesHandler';
 import { FormDataRequest } from 'types/API';
 

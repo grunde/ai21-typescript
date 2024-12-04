@@ -1,5 +1,5 @@
 import { AI21 } from 'ai21';
-import { FileResponse, UploadFileResponse } from '../../../src/types/rag';
+import { FileResponse, UploadFileResponse } from '../../../src/types';
 import path from 'path';
 
 function sleep(ms) {

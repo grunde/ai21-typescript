@@ -44,3 +44,12 @@ export {
   type ConversationalRagSource,
   type RetrievalStrategy,
 } from './rag';
+
+export {
+  type UploadFileRequest,
+  type UploadFileResponse,
+  type FileResponse,
+  type ListFilesFilters,
+  type UpdateFileRequest,
+  type FilePathOrFileObject,
+} from './files';

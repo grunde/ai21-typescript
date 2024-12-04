@@ -1,7 +1,7 @@
 import * as Models from '../../types';
 import { APIResource } from '../../APIResource';
-import { UploadFileResponse, UploadFileRequest, ListFilesFilters, UpdateFileRequest } from '../../types/rag';
-import { FileResponse } from 'types/rag/FileResponse';
+import { UploadFileResponse, UploadFileRequest, ListFilesFilters, UpdateFileRequest } from '../../types';
+import { FileResponse } from 'types/files/FileResponse';
 
 const FILES_PATH = '/library/files';
 
