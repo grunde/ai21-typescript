@@ -27,6 +27,7 @@ async function waitForFileProcessing(
 async function uploadGetUpdateDelete(fileInput, path) {
   const client = new AI21({ apiKey: process.env.AI21_API_KEY });
   try {
+    console.log(`Uploading file with id ${fileInput}`);
     const uploadFileResponse: UploadFileResponse = await client.files.create({
       file: fileInput,
       path: path,
