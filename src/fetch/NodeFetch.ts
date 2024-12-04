@@ -1,6 +1,7 @@
 import { FinalRequestOptions, CrossPlatformResponse } from 'types';
 import { BaseFetch } from './BaseFetch';
 import { Stream, NodeSSEDecoder } from '../streaming';
+import { NodeHTTPBody } from 'types/API';
 
 export class NodeFetch extends BaseFetch {
   async call(url: string, options: FinalRequestOptions): Promise<CrossPlatformResponse> {
@@ -10,7 +11,7 @@ export class NodeFetch extends BaseFetch {
     return nodeFetch(url, {
       method: options.method,
       headers: options?.headers ? (options.headers as Record<string, string>) : undefined,
-      body: options?.body ? (options.body as import('form-data') | string) : undefined,
+      body: options?.body ? (options.body as NodeHTTPBody) : undefined,
     });
   }
 

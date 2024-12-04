@@ -86,19 +86,19 @@ export abstract class APIClient {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         appendBodyToFormData(formDataRequest.formData, opts.body as Record<string, any>);
       }
-  
+
       const headers = {
         ...opts?.headers,
         ...formDataRequest.headers,
       };
-  
+
       const options: FinalRequestOptions = {
         method: 'post',
         path: path,
         body: formDataRequest.formData,
         headers,
       };
-  
+
       return this.performRequest(options).then((response) => this.fetch.handleResponse<Rsp>(response) as Rsp);
     });
   }

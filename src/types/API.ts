@@ -33,3 +33,5 @@ export type CrossPlatformReadableStream = ReadableStream<Uint8Array> | import('s
 export type UnifiedFormData = FormData | import('form-data');
 
 export type FormDataRequest = { formData: UnifiedFormData; headers: Headers };
+
+export type NodeHTTPBody = string | import('form-data');
