@@ -1,5 +1,5 @@
 import * as Models from '../../../../src/types';
-import {ConversationalRag} from "../../../../src/resources/rag/conversationalRag";
+import {ConversationalRag} from "../../../../src/resources/rag/conversational-rag";
 import { APIClient } from '../../../../src/APIClient';
 
 

@@ -5,7 +5,7 @@ import { Chat } from './resources/chat';
 import { APIClient } from './APIClient';
 import { Headers } from './types';
 import * as Runtime from './runtime';
-import { ConversationalRag } from './resources/rag/conversationalRag';
+import { ConversationalRag } from './resources/rag/conversational-rag';
 import { Files } from './resources';
 
 export interface ClientOptions {

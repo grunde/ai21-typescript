@@ -1,5 +1,5 @@
 import * as Models from '../../../src/types';
-import { Files } from '../../../src/resources/rag/files';
+import { Files } from '../../../src/resources/files/files';
 import { APIClient } from '../../../src/APIClient';
 
 class MockAPIClient extends APIClient {

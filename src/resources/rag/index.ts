@@ -1,2 +1,1 @@
-export { ConversationalRag } from './conversationalRag';
-export { Files } from './files';
+export { ConversationalRag } from './conversational-rag';
