@@ -20,8 +20,8 @@ export class NodeFilesHandler extends BaseFilesHandler {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async handleStringFile(filePath: string, formData: any): Promise<void> {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
     if (!isNode) {
       throw new Error('File system operations are not supported in browser environment');
     }
@@ -74,8 +74,8 @@ export class NodeFilesHandler extends BaseFilesHandler {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private createFormDataResponse(formData: any): FormDataRequest {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
     return {
       formData,
       headers: {
