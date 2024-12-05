@@ -70,10 +70,10 @@ const client = new AI21({
   apiKey: process.env.AI21_API_KEY, // or pass it in directly
 });
 
-const fileUploadResponse = await client.files.upload({
- file: 'path/to/file',
+const fileUploadResponse = await client.files.create({
+ file: './articles/article1.pdf',
  labels: ['science', 'biology'],
- path: 'path/to/file',
+ path: 'virtual-path/to/science-articles',
 });
 
 
