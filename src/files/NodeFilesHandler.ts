@@ -21,7 +21,7 @@ export class NodeFilesHandler extends BaseFilesHandler {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async handleStringFile(filePath: string, formData: any): Promise<void> {
+  private async createStreamFromFilePath(filePath: string, formData: any): Promise<void> {
     if (!isNode) {
       throw new Error('File system operations are not supported in browser environment');
     }
@@ -42,8 +42,8 @@ export class NodeFilesHandler extends BaseFilesHandler {
       const formData = new FormData();
 
       if (typeof file === 'string') {
-        await this.handleStringFile(file, formData);
-        return this.createFormDataResponse(formData);
+        await this.createStreamFromFilePath(file, formData);
+        return this.createFormDataRequest(formData);
       }
 
       if (!file || typeof file !== 'object') {
@@ -55,7 +55,7 @@ export class NodeFilesHandler extends BaseFilesHandler {
           filename: file.name,
           contentType: file.type,
         });
-        return this.createFormDataResponse(formData);
+        return this.createFormDataRequest(formData);
       }
 
       if ('stream' in file && typeof file.stream === 'function') {
@@ -64,7 +64,7 @@ export class NodeFilesHandler extends BaseFilesHandler {
           filename: file.name,
           contentType: file.type,
         });
-        return this.createFormDataResponse(formData);
+        return this.createFormDataRequest(formData);
       }
 
       throw new Error(`Unsupported file type for Node.js file upload flow: ${file}`);
@@ -75,7 +75,7 @@ export class NodeFilesHandler extends BaseFilesHandler {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private createFormDataResponse(formData: any): FormDataRequest {
+  private createFormDataRequest(formData: any): FormDataRequest {
     return {
       formData,
       headers: {
