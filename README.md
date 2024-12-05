@@ -20,6 +20,8 @@ yarn add ai21
 
 To use the AI21 API Client, you'll need to have an API key. You can obtain an API key by signing up for an account on the AI21 website.
 
+The `AI21` class provides a `chat` property that gives you access to the Chat API. You can use this to generate text, complete prompts, and more.
+
 Here's an example of how to use the `AI21` class to interact with the API:
 
 ```typescript
@@ -55,12 +57,10 @@ for await (const chunk of streamResponse) {
 }
 ```
 
-The `AI21` class provides a `chat` property that gives you access to the Chat API. You can use this to generate text, complete prompts, and more.
-
 ### Files
 
 
-The `AI21` class provides a `files` property that gives you access to the Files API. You can use this to upload files to the AI21 Studio. These files will be used as context for the conversational-rag engine.
+The `AI21` class provides a `files` property that gives you access to the Files API. You can use this to upload files to the AI21 Studio, which can then be utilized as context for the conversational RAG engine
 
 
 ```typescript
