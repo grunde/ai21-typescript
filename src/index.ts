@@ -38,9 +38,16 @@ export {
   type ConversationalRagResponse,
   type ConversationalRagSource,
   type RetrievalStrategy,
+  type UploadFileRequest,
+  type UploadFileResponse,
+  type FileResponse,
+  type ListFilesFilters,
+  type UpdateFileRequest,
+  type FilePathOrFileObject,
 } from './types';
 export { APIClient } from './APIClient';
 export { AI21Error, MissingAPIKeyError } from './errors';
 export { Stream } from './streaming';
 export { APIResource } from './APIResource';
-export { Chat, Completions, ConversationalRag } from './resources';
+export { Chat, Completions, ConversationalRag, Files } from './resources';
+export { isBrowser, isNode } from './runtime';

@@ -1,1 +1,1 @@
-export { ConversationalRag } from './conversationalRag';
+export { ConversationalRag } from './conversational-rag';
