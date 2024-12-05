@@ -57,6 +57,35 @@ for await (const chunk of streamResponse) {
 
 The `AI21` class provides a `chat` property that gives you access to the Chat API. You can use this to generate text, complete prompts, and more.
 
+### Files
+
+
+The `AI21` class provides a `files` property that gives you access to the Files API. You can use this to upload files to the AI21 Studio. These files will be used as context for the conversational-rag engine.
+
+
+```typescript
+import { AI21 } from 'ai21';
+
+const client = new AI21({
+  apiKey: process.env.AI21_API_KEY, // or pass it in directly
+});
+
+const fileUploadResponse = await client.files.upload({
+ file: 'path/to/file',
+ labels: ['science', 'biology'],
+ path: 'path/to/file',
+});
+
+
+const file = await client.files.get(fileUploadResponse.fileId);
+
+
+const convRagResponse = await client.conversationalRag.create({
+     messages: [{ role: 'user', content: 'This question presumes that the answer can be found within the uploaded files.' }],
+   });
+```
+
+
 ## Configuration
 
 The `AI21` class accepts several configuration options, which you can pass in when creating a new instance:
