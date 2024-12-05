@@ -15,9 +15,9 @@
 - [Installation](#Installation) 💿
 - [Examples](#examples-tldr) 🗂️
 - [AI21 Official Documentation](#Documentation)
-- [Chat](#Chat-Usage)
-- [Conversational RAG (Beta)](#Conversational-RAG-Usage)
-- [Files](#Files-Usage)
+- [Chat](#Chat)
+- [Conversational RAG (Beta)](#Conversational-RAG)
+- [Files](#Files)
 
 
 The AI21 API Client is a TypeScript library that provides a convenient interface for interacting with the AI21 API. It abstracts away the low-level details of making API requests and handling responses, allowing developers to focus on building their applications.
@@ -38,7 +38,7 @@ yarn add ai21
 
 ## Examples (tl;dr)
 
-If you want to quickly get a glance how to use the AI21 Python SDK and jump straight to business, you can check out the examples. Take a look at our models and see them in action! Several examples and demonstrations have been put together to show our models' functionality and capabilities.
+If you want to quickly get a glance how to use the AI21 Typescript SDK and jump straight to business, you can check out the examples. Take a look at our models and see them in action! Several examples and demonstrations have been put together to show our models' functionality and capabilities.
 
 ### [Check out the Examples](examples/)
 
@@ -46,12 +46,10 @@ Feel free to dive in, experiment, and adapt these examples to suit your needs. W
 
 ## Documentation
 
----
-
 The full documentation for the REST API can be found on [docs.ai21.com](https://docs.ai21.com/).
 
 
-## Chat-Usage
+## Chat
 
 To use the AI21 API Client, you'll need to have an API key. You can obtain an API key by signing up for an account on the AI21 website.
 
@@ -92,7 +90,7 @@ for await (const chunk of streamResponse) {
 }
 ```
 ---
-### Files-Usage
+### Files
 
 
 The `AI21` class provides a `files` property that gives you access to the Files API. You can use it to upload, retrieve, update, list, and delete files.
@@ -117,7 +115,7 @@ const file = await client.files.get(fileUploadResponse.fileId);
 ```
 
 ---
-### Conversational-RAG-Usage
+### Conversational-RAG
 
 
 The `AI21` class provides a `conversationalRag` property that gives you access to the Conversational RAG API. You can use it to ask questions that are answered based on the files you uploaded.
@@ -145,6 +143,7 @@ The `AI21` class accepts several configuration options, which you can pass in wh
 - `apiKey`: Your AI21 API Key
 - `maxRetries`: The maximum number of retries for failed requests (default: `3`)
 - `timeout`: The request timeout in seconds
+- `dangerouslyAllowBrowser`: Set to `true` to allow the client to be used in a browser environment.
 
 ## API Reference
 
