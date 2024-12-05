@@ -22,6 +22,23 @@
 
 The AI21 API Client is a TypeScript library that provides a convenient interface for interacting with the AI21 API. It abstracts away the low-level details of making API requests and handling responses, allowing developers to focus on building their applications.
 
+## Environment Support
+
+This client supports both Node.js and browser environments:
+
+- **Node.js**: Works out of the box with Node.js >=18.0.0
+- **Browser**: Requires explicit opt-in by setting `dangerouslyAllowBrowser: true` in the client options
+
+```typescript
+// Browser usage example
+const client = new AI21({
+  apiKey: process.env.AI21_API_KEY, // or pass it in directly
+  dangerouslyAllowBrowser: true  // Required for browser environments
+});
+```
+
+> ⚠️ **Security Notice**: Using this client in the browser could expose your API key to end users. Only enable `dangerouslyAllowBrowser` if you understand the security implications and have implemented appropriate security measures.
+
 ## Installation
 
 You can install the AI21 API Client using npm or yarn:
