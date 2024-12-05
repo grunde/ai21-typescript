@@ -11,6 +11,7 @@
 <a href="https://opensource.org/licenses/Apache-2.0" target="_blank"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
 </p>
 
+The AI21 API Client is a TypeScript library that provides a convenient interface for interacting with the AI21 API. It abstracts away the low-level details of making API requests and handling responses, allowing developers to focus on building their applications.
 
 - [Installation](#Installation) 💿
 - [Examples](#examples-tldr) 🗂️
@@ -19,8 +20,6 @@
 - [Conversational RAG (Beta)](#Conversational-RAG)
 - [Files](#Files)
 
-
-The AI21 API Client is a TypeScript library that provides a convenient interface for interacting with the AI21 API. It abstracts away the low-level details of making API requests and handling responses, allowing developers to focus on building their applications.
 
 ## Environment Support
 
