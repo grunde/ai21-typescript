@@ -1,4 +1,24 @@
-# AI21 API Client
+<h1 align="center">
+    <a href="https://github.com/AI21Labs/ai21-typescript">AI21 Labs TypeScript SDK</a>
+</h1>
+
+<p align="center">
+<a href="https://github.com/AI21Labs/ai21-typescript/actions/workflows/unittests.yaml"><img src="https://github.com/AI21Labs/ai21-typescript/actions/workflows/test.yaml/badge.svg?branch=main" alt="Test"></a>
+<a href="https://github.com/AI21Labs/ai21-typescript/actions/workflows/integration-tests.yaml"><img src="https://github.com/AI21Labs/ai21-typescript/actions/workflows/integration-tests.yaml/badge.svg?branch=main" alt="Integration Tests"></a>
+<a href="https://www.npmjs.com/package/ai21" target="_blank"><img src="https://img.shields.io/npm/v/ai21?color=%2334D058&label=npm%20package" alt="Package version"></a>
+<a href="https://nodejs.org/" target="_blank"><img src="https://img.shields.io/badge/node->=18.0.0-brightgreen" alt="Supported Node.js versions"></a>
+<a href="https://github.com/semantic-release/semantic-release" target="_blank"><img src="https://img.shields.io/badge/semantic--release-typescript-e10079?logo=semantic-release" alt="Semantic Release Support"></a>
+<a href="https://opensource.org/licenses/Apache-2.0" target="_blank"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
+</p>
+
+
+- [Installation](#Installation) 💿
+- [Examples](#examples-tldr) 🗂️
+- [AI21 Official Documentation](#Documentation)
+- [Chat](#Chat-Usage)
+- [Conversational RAG (Beta)](#Conversational-RAG-Usage)
+- [Files](#Files-Usage)
+
 
 The AI21 API Client is a TypeScript library that provides a convenient interface for interacting with the AI21 API. It abstracts away the low-level details of making API requests and handling responses, allowing developers to focus on building their applications.
 
@@ -16,7 +36,22 @@ or
 yarn add ai21
 ```
 
-## Usage
+## Examples (tl;dr)
+
+If you want to quickly get a glance how to use the AI21 Python SDK and jump straight to business, you can check out the examples. Take a look at our models and see them in action! Several examples and demonstrations have been put together to show our models' functionality and capabilities.
+
+### [Check out the Examples](examples/)
+
+Feel free to dive in, experiment, and adapt these examples to suit your needs. We believe they'll help you get up and running quickly.
+
+## Documentation
+
+---
+
+The full documentation for the REST API can be found on [docs.ai21.com](https://docs.ai21.com/).
+
+
+## Chat-Usage
 
 To use the AI21 API Client, you'll need to have an API key. You can obtain an API key by signing up for an account on the AI21 website.
 
@@ -46,7 +81,7 @@ The client supports streaming responses for real-time processing. Here are examp
 #### Using Async Iterator
 
 ```typescript
-const streamResponse = await ai21.chat.completions.create({
+const streamResponse = await client.chat.completions.create({
   model: 'jamba-1.5-mini',
   messages: [{ role: 'user', content: 'Write a story about a space cat' }],
   stream: true,
@@ -56,11 +91,11 @@ for await (const chunk of streamResponse) {
   console.log(chunk.choices[0]?.delta?.content || '');
 }
 ```
+---
+### Files-Usage
 
-### Files
 
-
-The `AI21` class provides a `files` property that gives you access to the Files API. You can use this to upload files to the AI21 Studio, which can then be utilized as context for the conversational RAG engine
+The `AI21` class provides a `files` property that gives you access to the Files API. You can use it to upload, retrieve, update, list, and delete files.
 
 
 ```typescript
@@ -79,10 +114,26 @@ const fileUploadResponse = await client.files.create({
 
 const file = await client.files.get(fileUploadResponse.fileId);
 
+```
+
+---
+### Conversational-RAG-Usage
+
+
+The `AI21` class provides a `conversationalRag` property that gives you access to the Conversational RAG API. You can use it to ask questions that are answered based on the files you uploaded.
+
+
+```typescript
+import { AI21 } from 'ai21';
+
+const client = new AI21({
+  apiKey: process.env.AI21_API_KEY, // or pass it in directly
+});
 
 const convRagResponse = await client.conversationalRag.create({
      messages: [{ role: 'user', content: 'This question presumes that the answer can be found within the uploaded files.' }],
    });
+
 ```
 
 
