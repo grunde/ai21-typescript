@@ -3,8 +3,8 @@
 </h1>
 
 <p align="center">
-<a href="https://github.com/AI21Labs/ai21-typescript/actions/workflows/unittests.yaml"><img src="https://github.com/AI21Labs/ai21-typescript/actions/workflows/test.yaml/badge.svg?branch=main" alt="Test"></a>
-<a href="https://github.com/AI21Labs/ai21-typescript/actions/workflows/integration-tests.yaml"><img src="https://github.com/AI21Labs/ai21-typescript/actions/workflows/integration-tests.yaml/badge.svg?branch=main" alt="Integration Tests"></a>
+<a href="https://github.com/AI21Labs/ai21-typescript/actions/workflows/unittests.yml"><img src="https://github.com/AI21Labs/ai21-typescript/actions/workflows/unittests.yml/badge.svg?branch=main" alt="Test"></a>
+<a href="https://github.com/AI21Labs/ai21-typescript/actions/workflows/integration-tests.yml"><img src="https://github.com/AI21Labs/ai21-typescript/actions/workflows/integration-tests.yml/badge.svg?branch=main" alt="Integration Tests"></a>
 <a href="https://www.npmjs.com/package/ai21" target="_blank"><img src="https://img.shields.io/npm/v/ai21?color=%2334D058&label=npm%20package" alt="Package version"></a>
 <a href="https://nodejs.org/" target="_blank"><img src="https://img.shields.io/badge/node->=18.0.0-brightgreen" alt="Supported Node.js versions"></a>
 <a href="https://github.com/semantic-release/semantic-release" target="_blank"><img src="https://img.shields.io/badge/semantic--release-typescript-e10079?logo=semantic-release" alt="Semantic Release Support"></a>
