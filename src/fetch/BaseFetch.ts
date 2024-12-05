@@ -7,6 +7,7 @@ export type APIResponse<T> = {
   data?: T;
   response: CrossPlatformResponse;
 };
+
 export abstract class BaseFetch {
   abstract call(url: string, options: FinalRequestOptions): Promise<CrossPlatformResponse>;
   async handleResponse<T>({ response, options }: APIResponseProps) {

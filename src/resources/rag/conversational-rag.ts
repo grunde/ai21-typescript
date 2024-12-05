@@ -1,7 +1,7 @@
 import * as Models from '../../types';
 import { APIResource } from '../../APIResource';
-import { ConversationalRagRequest } from '../../types/rag/ConversationalRagRequest';
-import { ConversationalRagResponse } from '../../types/rag/ConversationalRagResponse';
+import { ConversationalRagRequest } from '../../types';
+import { ConversationalRagResponse } from '../../types';
 
 export class ConversationalRag extends APIResource {
   create(body: ConversationalRagRequest, options?: Models.RequestOptions) {

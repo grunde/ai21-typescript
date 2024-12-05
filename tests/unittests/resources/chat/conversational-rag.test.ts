@@ -1,10 +1,14 @@
 import * as Models from '../../../../src/types';
-import {ConversationalRag} from "../../../../src/resources/rag/conversationalRag";
+import {ConversationalRag} from "../../../../src/resources/rag/conversational-rag";
 import { APIClient } from '../../../../src/APIClient';
 
 
 class MockAPIClient extends APIClient {
     public post = jest.fn();
+    public upload = jest.fn();
+    public get = jest.fn();
+    public delete = jest.fn();
+    public put = jest.fn();
   }
   
 

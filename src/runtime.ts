@@ -1,5 +1,3 @@
-import { BrowserFetch, Fetch, NodeFetch } from './fetch';
-
 export const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
 /**
@@ -18,11 +16,3 @@ export const isWebWorker =
 
 export const isNode =
   typeof process !== 'undefined' && Boolean(process.version) && Boolean(process.versions?.node);
-
-export function createFetchInstance(): Fetch {
-  if (isBrowser || isWebWorker) {
-    return new BrowserFetch();
-  }
-
-  return new NodeFetch();
-}

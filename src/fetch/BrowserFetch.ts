@@ -9,7 +9,7 @@ export class BrowserFetch extends BaseFetch {
     return fetch(url, {
       method: options.method,
       headers: options?.headers ? (options.headers as HeadersInit) : undefined,
-      body: options?.body ? JSON.stringify(options.body) : undefined,
+      body: options?.body ? (options.body as BodyInit) : undefined,
       signal: controller.signal,
     });
   }
