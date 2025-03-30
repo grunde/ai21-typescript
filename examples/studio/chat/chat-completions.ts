@@ -5,7 +5,7 @@ async function main() {
 
   try {
     const response = await client.chat.completions.create({
-      model: 'jamba-1.5-mini',
+      model: 'jamba-mini',
       messages: [{ role: 'user', content: 'Hello, how are you? tell me a 100 line story about a cat' }],
     });
     console.log(response);

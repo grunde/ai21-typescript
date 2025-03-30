@@ -2,6 +2,8 @@ import * as Models from '../../types';
 import { APIResource } from '../../APIResource';
 import { Stream } from '../../streaming';
 
+const deprecatedModels = ['jamba-1.5-mini', 'jamba-1.5-large'];
+
 export class Completions extends APIResource {
   create(
     body: Models.ChatCompletionCreateParamsNonStreaming,
@@ -19,6 +21,14 @@ export class Completions extends APIResource {
   ): Promise<Stream<Models.ChatCompletionChunk> | Models.ChatCompletionResponse>;
 
   create(body: Models.ChatCompletionCreateParams, options?: Models.RequestOptions) {
+    // Check for deprecated models
+    if (deprecatedModels.includes(body.model)) {
+      console.warn(
+        `Warning: The model "${body.model}" is deprecated and will be removed in a future release.
+         Please use jamba-mini or jamba-large instead.`,
+      );
+    }
+
     return this.client.post<Models.ChatCompletionCreateParams, Models.ChatCompletionResponse>(
       '/chat/completions',
       {

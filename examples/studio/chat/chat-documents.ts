@@ -29,7 +29,7 @@ async function main() {
 
   try {
     const response = await client.chat.completions.create({
-      model: 'jamba-1.5-mini',
+      model: 'jamba-mini',
       messages: [
         {
           role: 'system',
