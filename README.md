@@ -81,7 +81,7 @@ const client = new AI21({
 });
 
 const response = await client.chat.completions.create({
-  model: 'jamba-1.5-mini',
+  model: 'jamba-mini',
   messages: [{ role: 'user', content: 'Hello, how are you? tell me a 100 line story about a cat named "Fluffy"' }],
 });
 
@@ -96,7 +96,7 @@ The client supports streaming responses for real-time processing. Here are examp
 
 ```typescript
 const streamResponse = await client.chat.completions.create({
-  model: 'jamba-1.5-mini',
+  model: 'jamba-mini',
   messages: [{ role: 'user', content: 'Write a story about a space cat' }],
   stream: true,
 });
