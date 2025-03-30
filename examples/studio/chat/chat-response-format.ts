@@ -22,7 +22,7 @@ async function main() {
   try {
     const response = await client.chat.completions.create({
       messages,
-      model: 'jamba-1.5-large',
+      model: 'jamba-large',
       responseFormat,
     });
 

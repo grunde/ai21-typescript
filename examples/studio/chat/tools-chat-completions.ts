@@ -42,7 +42,7 @@ async function main() {
   try {
     // First response with streaming
     const response = await client.chat.completions.create({
-      model: 'jamba-1.5-large',
+      model: 'jamba-large',
       messages,
       tools,
     });
@@ -69,7 +69,7 @@ async function main() {
 
           // Get final response
           const finalResponse = await client.chat.completions.create({
-            model: 'jamba-1.5-large',
+            model: 'jamba-large',
             messages,
             tools,
           });
