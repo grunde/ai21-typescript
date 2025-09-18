@@ -1,3 +1,4 @@
 export { Chat, Completions } from './chat';
 export { ConversationalRag } from './rag';
-export { Files } from './files';
+export { Library } from './library';
+export { Maestro, Beta, Runs } from './maestro';
