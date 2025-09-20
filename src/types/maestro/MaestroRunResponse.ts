@@ -32,6 +32,11 @@ type DataSources = {
   web_search?: WebSearchResult[];
 };
 
+type ErrorObject = {
+  message: string;
+};
+
+
 export interface MaestroRunResponse {
   /* 
   The ID of the maestro run for polling the status.
@@ -50,4 +55,8 @@ export interface MaestroRunResponse {
   Detailed results for each requirement.
   */
   requirements_result: MaestroRunRequirementResult;
+  /* 
+  Error object, present if the run failed.
+  */
+  error?: ErrorObject | null;
 }
